@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K1 운영 패널</title>
+<link rel="icon" href="/static/favicon.svg">
+<link rel="stylesheet" href="/static/panel.css">
+</head>
+<body>
+<header class="top">
+  <h1>K1 운영 패널</h1>
+  <span class="pill" id="svc">연결 중…</span>
+  <span class="pill mock" id="mock" hidden>MOCK</span>
+  <span class="spacer"></span>
+  <span class="muted" id="uptime"></span>
+  <a class="link" href="/display" target="k1display">관객 화면 열기 ↗</a>
+</header>
+
+<div id="banners"></div>
+
+<section class="tiles" id="tiles">
+  <div class="tile" id="t-cam"><b>카메라</b><span>–</span><small></small></div>
+  <div class="tile" id="t-person"><b>사람</b><span>–</span><small></small></div>
+  <div class="tile" id="t-lat"><b>지연</b><span>–</span><small>p95 · 30초</small></div>
+  <div class="tile" id="t-hz"><b>제어</b><span>–</span><small></small></div>
+  <div class="tile" id="t-fall"><b>낙상 · 리셋</b><span>–</span><small></small></div>
+  <div class="tile" id="t-backend"><b>백엔드</b><span>–</span><small></small></div>
+  <div class="tile" id="t-walk"><b>걷기</b><span>–</span><small></small></div>
+  <div class="tile" id="t-speed"><b>로봇 속도</b><span>–</span><small></small></div>
+  <div class="tile" id="t-view"><b>관객 화면</b><span>–</span><small></small></div>
+</section>
+
+<div class="cols">
+  <div class="col">
+    <section class="card">
+      <div class="big-row">
+        <button class="big primary" id="b-toggle" data-key="Space">▶ 시작<kbd>Space</kbd></button>
+        <button class="big" id="b-calib" data-key="C">보정<kbd>C</kbd></button>
+        <button class="big" id="b-reset" data-key="R">리셋<kbd>R</kbd></button>
+      </div>
+      <button class="big danger wide" id="b-estop">■ 비상정지<kbd>Esc</kbd></button>
+      <p class="hint" id="calib-hint">보정: 체험자가 카메라 정면을 보고 팔을 내리고 똑바로 선 상태에서 누르세요.</p>
+    </section>
+
+    <section class="card">
+      <h2>모드</h2>
+      <div class="seg" id="mode">
+        <button data-v="live">실시간 따라하기</button>
+        <button data-v="idle">대기 (인사 동작)</button>
+        <button data-v="gesture">제스처 재생</button>
+      </div>
+      <div class="gestures" id="gestures"></div>
+      <label class="check"><input type="checkbox" id="playlist"> 제스처 순서대로 반복 재생</label>
+    </section>
+
+    <section class="card">
+      <h2>걷기</h2>
+      <div class="row">
+        <div class="seg small" id="walk" title="보행 모드">
+          <button data-v="visitor" title="체험객이 카메라 앞 2.5–3.5 m에서 한 걸음 나오면 걷고, 몸을 돌리면 돈다">체험객</button>
+          <button data-v="presenter" title="강연자: 몸을 돌려도 로봇은 돌지 않고, 무대를 옆으로 걸을 때만 같이 걷는다">강연자</button>
+          <button data-v="off" title="사람을 보고 걷지 않는다 (운영자 보행은 그대로)">끄기</button>
+        </div>
+        <label class="slider">최대 속도
+          <input type="range" id="max-speed" min="0.1" max="0.8" step="0.05">
+          <output id="max-speed-v">–</output>
+        </label>
+      </div>
+      <div class="drive">
+        <div class="pad" id="pad">
+          <button data-d="turnL" title="왼쪽으로 돌기 (Q)">⟲<small>Q</small></button>
+          <button data-d="fwd" title="앞으로 (W, ↑)">▲<small>W</small></button>
+          <button data-d="turnR" title="오른쪽으로 돌기 (E)">⟳<small>E</small></button>
+          <button data-d="left" title="왼쪽 옆걸음 (A, ←)">◀<small>A</small></button>
+          <button data-d="back" title="뒤로 (S, ↓)">▼<small>S</small></button>
+          <button data-d="right" title="오른쪽 옆걸음 (D, →)">▶<small>D</small></button>
+        </div>
+        <p class="hint">운영자 보행: 누르고 있는 동안만 걷습니다 (방향키 / WASD, 회전 Q·E). 사람의 보행 의도보다 우선합니다.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>사람 찾을 영역 <span class="muted" id="crop-v">전체 화면</span></h2>
+      <div class="cropbox" id="cropbox" title="드래그해서 영역 지정">
+        <img id="crop-img" alt="카메라 화면 (연결 중)" draggable="false">
+        <div class="crop-rect" id="crop-rect" hidden></div>
+        <div class="crop-draft" id="crop-draft" hidden></div>
+      </div>
+      <div class="row crop-row">
+        <button class="small" id="b-crop-clear">전체 화면 (지우기)</button>
+        <span class="hint">카메라 화면에서 강연자가 다니는 범위를 드래그하면 그 안에서만 사람을 찾습니다. 청중 머리·패널석·사회자석은 빼세요.</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>설정</h2>
+      <div class="grid2">
+        <span>미러</span>
+        <div class="seg small" id="mirror"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
+        <span>백엔드</span>
+        <div class="seg small" id="backend">
+          <button data-v="hybrid">hybrid (기본: 서기 split · 걷기 SONIC)</button>
+          <button data-v="split">split</button>
+          <button data-v="sonic">sonic</button>
+          <button data-v="sonic_human">sonic 전신(사람)</button>
+        </div>
+        <span>팔 경로</span>
+        <div class="seg small" id="arm_path" title="바꾸면 카메라·시뮬레이션이 몇 초 다시 시작합니다">
+          <button data-v="improved">개선 (기본)</button>
+          <button data-v="classic">기존</button>
+        </div>
+        <span>인식</span>
+        <div class="seg small" id="perception" title="바꾸면 카메라 프로세스가 다시 시작합니다 (GEM-X는 모델 로딩 20–40초, 그동안 관객 화면은 대체 영상)">
+          <button data-v="mediapipe" title="MediaPipe: CPU, 어느 노트북에서나 (기본)">MediaPipe (CPU)</button>
+          <button data-v="gemx" title="GEM-X: NVIDIA GPU 필요. 전신 3D·깊이 추정, 먼 거리(강연장)에 유리. 안 되면 자동으로 MediaPipe">GEM-X (GPU)</button>
+        </div>
+        <span>입력 소스</span>
+        <div class="row">
+          <select id="source"></select>
+          <button class="small" id="b-source">적용</button>
+        </div>
+        <span>대체 영상</span>
+        <div class="seg small" id="fallback">
+          <button data-v="auto">자동</button><button data-v="on">항상</button><button data-v="off">끄기</button>
+        </div>
+        <span>대기 전환</span>
+        <label class="row">사람이 <input type="number" id="idle-after" min="5" max="600" step="5"> 초 없으면 대기</label>
+        <span>자동</span>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="auto-calib"> 자동 보정</label>
+          <label class="check"><input type="checkbox" id="auto-start"> 자동 시작</label>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="card preview">
+      <h2>관객 화면 미리보기 <span class="muted" id="view-reason"></span></h2>
+      <div class="frame"><iframe id="preview" src="/display?preview=1" title="관객 화면 미리보기"></iframe></div>
+    </section>
+
+    <section class="card">
+      <h2>프로세스</h2>
+      <table class="procs" id="procs"></table>
+      <pre class="logtail" id="logtail" hidden></pre>
+    </section>
+
+    <section class="card">
+      <h2>기록 <span class="muted" id="session"></span></h2>
+      <ol class="events" id="events"></ol>
+    </section>
+
+    <section class="card quiet">
+      <button class="small ghost" id="b-quit">서비스 종료</button>
+      <span class="hint" id="quit-hint"></span>
+    </section>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<script src="/static/panel.js"></script>
+</body>
+</html>

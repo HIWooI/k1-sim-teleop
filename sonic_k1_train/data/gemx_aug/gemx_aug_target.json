@@ -1,0 +1,875 @@
+{
+ "per_clip": {
+  "arms_out": {
+   "category": "full_stand",
+   "fps": 25.0,
+   "tick_tracked_s": 16.4,
+   "gaps": 0,
+   "gap_s_max": 0.0
+  },
+  "bow": {
+   "category": "full_stand",
+   "fps": 30.0,
+   "tick_tracked_s": 4.3,
+   "gaps": 0,
+   "gap_s_max": 0.0
+  },
+  "cheeks": {
+   "category": "full_stand",
+   "fps": 25.0,
+   "tick_tracked_s": 7.8,
+   "gaps": 0,
+   "gap_s_max": 0.0
+  },
+  "event_bow": {
+   "category": "full_stand",
+   "fps": 30.0,
+   "tick_tracked_s": 8.2,
+   "gaps": 0,
+   "gap_s_max": 0.0,
+   "shift_ms": -140,
+   "joint_cm": 4.71,
+   "wrist_cm": 7.47
+  },
+  "event_open_arms": {
+   "category": "full_stand",
+   "fps": 30.0,
+   "tick_tracked_s": 14.0,
+   "gaps": 0,
+   "gap_s_max": 0.0,
+   "shift_ms": -140,
+   "joint_cm": 5.49,
+   "wrist_cm": 14.32
+  },
+  "event_raise_arms": {
+   "category": "full_stand",
+   "fps": 30.0,
+   "tick_tracked_s": 13.3,
+   "gaps": 0,
+   "gap_s_max": 0.0,
+   "shift_ms": -140,
+   "joint_cm": 6.51,
+   "wrist_cm": 17.07
+  },
+  "event_stand": {
+   "category": "full_stand",
+   "fps": 30.0,
+   "tick_tracked_s": 7.9,
+   "gaps": 0,
+   "gap_s_max": 0.0,
+   "shift_ms": -140,
+   "joint_cm": 6.71,
+   "wrist_cm": 6.05
+  },
+  "explain": {
+   "category": "full_stand",
+   "fps": 24.0,
+   "tick_tracked_s": 8.7,
+   "gaps": 0,
+   "gap_s_max": 0.0
+  },
+  "hands_open": {
+   "category": "full_stand",
+   "fps": 29.97003,
+   "tick_tracked_s": 7.2,
+   "gaps": 0,
+   "gap_s_max": 0.0
+  },
+  "in_out": {
+   "category": "full_walk",
+   "fps": 25.0,
+   "tick_tracked_s": 17.6,
+   "gaps": 1,
+   "gap_s_max": 0.08
+  },
+  "k1live_rehearsal_full1": {
+   "category": "full_walk",
+   "fps": 30.0,
+   "tick_tracked_s": 84.4,
+   "gaps": 36,
+   "gap_s_max": 1.06
+  },
+  "pexels_10149176": {
+   "category": "waist_up",
+   "fps": 24.0,
+   "tick_tracked_s": 18.6,
+   "gaps": 3,
+   "gap_s_max": 2.12,
+   "shift_ms": -140,
+   "joint_cm": 9.28,
+   "wrist_cm": 12.78
+  },
+  "pexels_10149187": {
+   "category": "waist_up",
+   "fps": 24.0,
+   "tick_tracked_s": 22.2,
+   "gaps": 0,
+   "gap_s_max": 0.0,
+   "shift_ms": -140,
+   "joint_cm": 12.36,
+   "wrist_cm": 22.8
+  },
+  "pexels_10374292": {
+   "category": "waist_up",
+   "fps": 24.0,
+   "tick_tracked_s": 1.8,
+   "gaps": 9,
+   "gap_s_max": 2.72,
+   "shift_ms": -140,
+   "joint_cm": 11.35,
+   "wrist_cm": 10.22
+  },
+  "pexels_10515017": {
+   "category": "waist_up",
+   "fps": 24.0,
+   "tick_tracked_s": 13.9,
+   "gaps": 0,
+   "gap_s_max": 0.0,
+   "shift_ms": -140,
+   "joint_cm": 13.19,
+   "wrist_cm": 9.3
+  },
+  "pexels_3888260": {
+   "category": "full_walk",
+   "fps": 25.0,
+   "tick_tracked_s": 17.6,
+   "gaps": 1,
+   "gap_s_max": 0.04
+  },
+  "pexels_6764051": {
+   "category": "full_walk",
+   "fps": 25.0,
+   "tick_tracked_s": 25.0,
+   "gaps": 11,
+   "gap_s_max": 0.28
+  },
+  "pexels_8836738": {
+   "category": "full_stand",
+   "fps": 25.0,
+   "tick_tracked_s": 51.0,
+   "gaps": 1,
+   "gap_s_max": 0.04
+  },
+  "pexels_9558217": {
+   "category": "turn",
+   "fps": 25.0,
+   "tick_tracked_s": 3.4,
+   "gaps": 10,
+   "gap_s_max": 1.36
+  },
+  "toward": {
+   "category": "full_walk",
+   "fps": 25.0,
+   "tick_tracked_s": 6.8,
+   "gaps": 8,
+   "gap_s_max": 0.12
+  },
+  "walk_in": {
+   "category": "full_walk",
+   "fps": 30.0,
+   "tick_tracked_s": 8.0,
+   "gaps": 0,
+   "gap_s_max": 0.0
+  }
+ },
+ "profiles": {
+  "full": {
+   "frames": 1310,
+   "clips": 4,
+   "bone_bias_deg": {
+    "hip": 3.6,
+    "thigh": 9.06,
+    "shin": 9.7,
+    "foot": 7.68,
+    "spine": 4.13,
+    "neck_head": 9.6,
+    "collar": 5.12,
+    "upper_arm": 6.47,
+    "forearm": 20.14,
+    "hand": 17.12
+   },
+   "bone_noise_deg": {
+    "hip": 4.4,
+    "thigh": 9.1,
+    "shin": 7.78,
+    "foot": 6.28,
+    "spine": 4.69,
+    "neck_head": 7.98,
+    "collar": 6.39,
+    "upper_arm": 9.96,
+    "forearm": 16.57,
+    "hand": 19.95
+   },
+   "root_bias_deg": [
+    2.58,
+    2.6,
+    0.13
+   ],
+   "root_noise_deg": [
+    2.1,
+    3.32,
+    3.77
+   ],
+   "bone_tau_slow": 1.553,
+   "bone_tau_fast": 0.01,
+   "bone_fast_frac": 0.0,
+   "bone_acf": {
+    "0.00": 1.0,
+    "0.10": 0.977,
+    "0.20": 0.942,
+    "0.30": 0.9,
+    "0.40": 0.853,
+    "0.50": 0.803,
+    "0.60": 0.753,
+    "0.70": 0.703,
+    "0.80": 0.653,
+    "0.90": 0.605,
+    "1.00": 0.558,
+    "1.10": 0.512,
+    "1.20": 0.468,
+    "1.30": 0.424,
+    "1.40": 0.381,
+    "1.50": 0.338,
+    "1.60": 0.296,
+    "1.70": 0.255,
+    "1.80": 0.215,
+    "1.90": 0.176,
+    "2.00": 0.14
+   },
+   "root_tau_slow": 1.553,
+   "root_tau_fast": 0.01,
+   "root_fast_frac": 0.0,
+   "root_acf": {
+    "0.00": 1.0,
+    "0.10": 0.97,
+    "0.20": 0.93,
+    "0.30": 0.883,
+    "0.40": 0.832,
+    "0.50": 0.779,
+    "0.60": 0.728,
+    "0.70": 0.678,
+    "0.80": 0.631,
+    "0.90": 0.587,
+    "1.00": 0.544,
+    "1.10": 0.508,
+    "1.20": 0.475,
+    "1.30": 0.443,
+    "1.40": 0.412,
+    "1.50": 0.381,
+    "1.60": 0.351,
+    "1.70": 0.32,
+    "1.80": 0.29,
+    "1.90": 0.259,
+    "2.00": 0.228
+   },
+   "joint_cm": {
+    "wrist": 12.36,
+    "elbow": 6.14,
+    "ankle": 12.26,
+    "knee": 6.19,
+    "head": 3.96,
+    "all": 5.88
+   },
+   "tilt_live_p50_p95": [
+    4.0,
+    8.0
+   ],
+   "tilt_ref_p50_p95": [
+    4.6,
+    13.2
+   ],
+   "clip_names": [
+    "event_bow",
+    "event_open_arms",
+    "event_raise_arms",
+    "event_stand"
+   ],
+   "post_redetect_bone_err_deg": [
+    null,
+    7.67,
+    0
+   ]
+  },
+  "waist_up": {
+   "frames": 1357,
+   "clips": 4,
+   "bone_bias_deg": {
+    "hip": 8.93,
+    "thigh": 25.39,
+    "shin": 15.43,
+    "foot": 18.68,
+    "spine": 11.15,
+    "neck_head": 12.77,
+    "collar": 14.49,
+    "upper_arm": 19.03,
+    "forearm": 34.99,
+    "hand": 28.31
+   },
+   "bone_noise_deg": {
+    "hip": 6.86,
+    "thigh": 14.52,
+    "shin": 8.51,
+    "foot": 13.82,
+    "spine": 6.84,
+    "neck_head": 9.29,
+    "collar": 9.45,
+    "upper_arm": 10.23,
+    "forearm": 17.91,
+    "hand": 16.55
+   },
+   "root_bias_deg": [
+    6.49,
+    7.11,
+    0.42
+   ],
+   "root_noise_deg": [
+    2.73,
+    3.9,
+    9.25
+   ],
+   "bone_tau_slow": 1.137,
+   "bone_tau_fast": 0.12,
+   "bone_fast_frac": 0.027,
+   "bone_acf": {
+    "0.00": 1.0,
+    "0.10": 0.905,
+    "0.20": 0.818,
+    "0.30": 0.753,
+    "0.40": 0.697,
+    "0.50": 0.644,
+    "0.60": 0.588,
+    "0.70": 0.536,
+    "0.80": 0.485,
+    "0.90": 0.432,
+    "1.00": 0.395,
+    "1.10": 0.364,
+    "1.20": 0.338,
+    "1.30": 0.307,
+    "1.40": 0.272,
+    "1.50": 0.242,
+    "1.60": 0.217,
+    "1.70": 0.197,
+    "1.80": 0.186,
+    "1.90": 0.168,
+    "2.00": 0.152
+   },
+   "root_tau_slow": 1.229,
+   "root_tau_fast": 0.12,
+   "root_fast_frac": 0.012,
+   "root_acf": {
+    "0.00": 1.0,
+    "0.10": 0.926,
+    "0.20": 0.851,
+    "0.30": 0.788,
+    "0.40": 0.733,
+    "0.50": 0.68,
+    "0.60": 0.621,
+    "0.70": 0.56,
+    "0.80": 0.504,
+    "0.90": 0.454,
+    "1.00": 0.42,
+    "1.10": 0.387,
+    "1.20": 0.359,
+    "1.30": 0.334,
+    "1.40": 0.309,
+    "1.50": 0.283,
+    "1.60": 0.259,
+    "1.70": 0.234,
+    "1.80": 0.218,
+    "1.90": 0.196,
+    "2.00": 0.175
+   },
+   "joint_cm": {
+    "wrist": 15.78,
+    "elbow": 10.43,
+    "ankle": 28.84,
+    "knee": 19.55,
+    "head": 4.65,
+    "all": 11.52
+   },
+   "tilt_live_p50_p95": [
+    11.9,
+    23.9
+   ],
+   "tilt_ref_p50_p95": [
+    9.9,
+    16.5
+   ],
+   "clip_names": [
+    "pexels_10149176",
+    "pexels_10149187",
+    "pexels_10374292",
+    "pexels_10515017"
+   ],
+   "post_redetect_bone_err_deg": [
+    9.61,
+    8.6,
+    49
+   ]
+  }
+ },
+ "gaps": {
+  "full_stand": {
+   "n": 1,
+   "tracked_s": 138.9,
+   "per_min": 0.43,
+   "len_s_p25_p50_p90": [
+    0.04,
+    0.04,
+    0.04
+   ],
+   "over_hold_frac": 0.0,
+   "per_min_le_hold": 0.43
+  },
+  "full_walk": {
+   "n": 57,
+   "tracked_s": 159.3,
+   "per_min": 21.47,
+   "len_s_p25_p50_p90": [
+    0.04,
+    0.04,
+    0.28
+   ],
+   "over_hold_frac": 0.07,
+   "per_min_le_hold": 19.96,
+   "logn_mu": -2.857,
+   "logn_sd": 0.796
+  },
+  "waist_up": {
+   "n": 12,
+   "tracked_s": 56.4,
+   "per_min": 12.76,
+   "len_s_p25_p50_p90": [
+    0.055,
+    0.23,
+    1.982
+   ],
+   "over_hold_frac": 0.25,
+   "per_min_le_hold": 9.57,
+   "logn_mu": -2.305,
+   "logn_sd": 1.014
+  },
+  "turn": {
+   "n": 10,
+   "tracked_s": 3.4,
+   "per_min": 178.57,
+   "len_s_p25_p50_p90": [
+    0.04,
+    0.04,
+    1.216
+   ],
+   "over_hold_frac": 0.2,
+   "per_min_le_hold": 142.86,
+   "logn_mu": -3.219,
+   "logn_sd": 0.1
+  }
+ },
+ "jumps": {
+  "full_stand": {
+   "n": 1,
+   "joint_cm_p50_p90": [
+    0.88,
+    0.88
+   ],
+   "wrist_cm_p50_p90": [
+    1.14,
+    1.14
+   ],
+   "root_deg_p50_p90": [
+    0.0,
+    0.0
+   ]
+  },
+  "full_walk": {
+   "n": 57,
+   "joint_cm_p50_p90": [
+    0.82,
+    6.3
+   ],
+   "wrist_cm_p50_p90": [
+    1.15,
+    6.17
+   ],
+   "root_deg_p50_p90": [
+    2.28,
+    6.87
+   ]
+  },
+  "waist_up": {
+   "n": 12,
+   "joint_cm_p50_p90": [
+    6.76,
+    11.58
+   ],
+   "wrist_cm_p50_p90": [
+    2.92,
+    14.52
+   ],
+   "root_deg_p50_p90": [
+    2.25,
+    12.72
+   ]
+  },
+  "turn": {
+   "n": 10,
+   "joint_cm_p50_p90": [
+    1.32,
+    8.43
+   ],
+   "wrist_cm_p50_p90": [
+    2.73,
+    15.22
+   ],
+   "root_deg_p50_p90": [
+    6.88,
+    6.88
+   ]
+  }
+ },
+ "hf_jitter_deg": {
+  "live_full_stand": {
+   "hip": 0.13,
+   "thigh": 0.19,
+   "shin": 0.17,
+   "foot": 0.28,
+   "spine": 0.12,
+   "neck_head": 0.22,
+   "collar": 0.19,
+   "upper_arm": 0.29,
+   "forearm": 0.58,
+   "hand": 0.68,
+   "tilt": 0.08
+  },
+  "live_full_walk": {
+   "hip": 0.1,
+   "thigh": 0.42,
+   "shin": 0.61,
+   "foot": 0.74,
+   "spine": 0.1,
+   "neck_head": 0.21,
+   "collar": 0.21,
+   "upper_arm": 0.35,
+   "forearm": 0.59,
+   "hand": 0.73,
+   "tilt": 0.09
+  },
+  "live_waist_up": {
+   "hip": 0.22,
+   "thigh": 0.35,
+   "shin": 0.32,
+   "foot": 0.46,
+   "spine": 0.3,
+   "neck_head": 0.44,
+   "collar": 0.44,
+   "upper_arm": 0.42,
+   "forearm": 0.55,
+   "hand": 0.51,
+   "tilt": 0.17
+  },
+  "live_turn": {
+   "hip": 3.93,
+   "thigh": 0.86,
+   "shin": 0.7,
+   "foot": 6.51,
+   "spine": 2.31,
+   "neck_head": 2.65,
+   "collar": 3.57,
+   "upper_arm": 4.83,
+   "forearm": 1.83,
+   "hand": 4.98,
+   "tilt": 0.09
+  },
+  "bones_walk": {
+   "hip": 0.0,
+   "thigh": 1.3,
+   "shin": 2.27,
+   "foot": 3.55,
+   "spine": 0.28,
+   "neck_head": 0.6,
+   "collar": 0.65,
+   "upper_arm": 0.83,
+   "forearm": 1.15,
+   "hand": 1.63,
+   "tilt": 0.5
+  },
+  "bones_other": {
+   "hip": 0.0,
+   "thigh": 0.21,
+   "shin": 0.23,
+   "foot": 0.3,
+   "spine": 0.1,
+   "neck_head": 0.28,
+   "collar": 0.24,
+   "upper_arm": 0.57,
+   "forearm": 1.27,
+   "hand": 1.73,
+   "tilt": 0.09
+  }
+ },
+ "calibration": {
+  "full": {
+   "target_arm_scaled": {
+    "bone_bias_deg": {
+     "hip": 3.6,
+     "thigh": 9.06,
+     "shin": 9.7,
+     "foot": 7.68,
+     "spine": 4.13,
+     "neck_head": 9.6,
+     "collar": 1.7919999999999998,
+     "upper_arm": 2.2645,
+     "forearm": 7.0489999999999995,
+     "hand": 5.992
+    },
+    "bone_noise_deg": {
+     "hip": 4.4,
+     "thigh": 9.1,
+     "shin": 7.78,
+     "foot": 6.28,
+     "spine": 4.69,
+     "neck_head": 7.98,
+     "collar": 2.2365,
+     "upper_arm": 3.486,
+     "forearm": 5.7995,
+     "hand": 6.982499999999999
+    },
+    "root_bias_deg": [
+     2.58,
+     2.6,
+     0.13
+    ],
+    "root_noise_deg": [
+     2.1,
+     3.32,
+     3.77
+    ],
+    "bone_tau_slow": 1.553,
+    "root_tau_slow": 1.553
+   },
+   "motion_only": {
+    "bone_bias_deg": {
+     "hip": 0.16,
+     "thigh": 0.2,
+     "shin": 0.13,
+     "foot": 0.24,
+     "spine": 0.13,
+     "neck_head": 0.18,
+     "collar": 0.17,
+     "upper_arm": 0.29,
+     "forearm": 0.44,
+     "hand": 0.41
+    },
+    "bone_noise_deg": {
+     "hip": 0.69,
+     "thigh": 0.56,
+     "shin": 0.34,
+     "foot": 0.53,
+     "spine": 0.61,
+     "neck_head": 1.0,
+     "collar": 0.8,
+     "upper_arm": 1.19,
+     "forearm": 1.98,
+     "hand": 1.96
+    },
+    "root_bias_deg": [
+     0.05,
+     0.09,
+     0.0
+    ],
+    "root_noise_deg": [
+     0.18,
+     0.44,
+     0.24
+    ],
+    "bone_tau_slow": 0.658,
+    "root_tau_slow": 0.521,
+    "joint_cm": {
+     "wrist": 0.65,
+     "elbow": 0.45,
+     "ankle": 0.41,
+     "knee": 0.28,
+     "head": 0.23,
+     "all": 0.29
+    }
+   },
+   "final": {
+    "bone_bias_deg": {
+     "hip": 4.1,
+     "thigh": 8.82,
+     "shin": 9.85,
+     "foot": 8.19,
+     "spine": 4.58,
+     "neck_head": 10.3,
+     "collar": 2.68,
+     "upper_arm": 4.18,
+     "forearm": 7.44,
+     "hand": 6.47
+    },
+    "bone_noise_deg": {
+     "hip": 3.96,
+     "thigh": 9.14,
+     "shin": 7.46,
+     "foot": 6.07,
+     "spine": 4.47,
+     "neck_head": 7.68,
+     "collar": 2.32,
+     "upper_arm": 3.44,
+     "forearm": 6.17,
+     "hand": 6.95
+    },
+    "root_bias_deg": [
+     2.35,
+     3.61,
+     0.23
+    ],
+    "root_noise_deg": [
+     2.28,
+     3.57,
+     3.91
+    ],
+    "bone_tau_slow": 1.329,
+    "root_tau_slow": 1.437,
+    "joint_cm": {
+     "wrist": 6.77,
+     "elbow": 5.24,
+     "ankle": 13.38,
+     "knee": 8.56,
+     "head": 7.1,
+     "all": 6.25
+    }
+   }
+  },
+  "waist_up": {
+   "target_arm_scaled": {
+    "bone_bias_deg": {
+     "hip": 8.93,
+     "thigh": 25.39,
+     "shin": 15.43,
+     "foot": 18.68,
+     "spine": 11.15,
+     "neck_head": 12.77,
+     "collar": 5.0714999999999995,
+     "upper_arm": 6.6605,
+     "forearm": 12.2465,
+     "hand": 9.908499999999998
+    },
+    "bone_noise_deg": {
+     "hip": 6.86,
+     "thigh": 14.52,
+     "shin": 8.51,
+     "foot": 13.82,
+     "spine": 6.84,
+     "neck_head": 9.29,
+     "collar": 3.3074999999999997,
+     "upper_arm": 3.5805,
+     "forearm": 6.2684999999999995,
+     "hand": 5.7924999999999995
+    },
+    "root_bias_deg": [
+     6.49,
+     7.11,
+     0.42
+    ],
+    "root_noise_deg": [
+     2.73,
+     3.9,
+     9.25
+    ],
+    "bone_tau_slow": 1.137,
+    "root_tau_slow": 1.229
+   },
+   "motion_only": {
+    "bone_bias_deg": {
+     "hip": 0.05,
+     "thigh": 0.16,
+     "shin": 0.07,
+     "foot": 0.14,
+     "spine": 0.04,
+     "neck_head": 0.04,
+     "collar": 0.05,
+     "upper_arm": 0.05,
+     "forearm": 0.08,
+     "hand": 0.1
+    },
+    "bone_noise_deg": {
+     "hip": 0.73,
+     "thigh": 0.92,
+     "shin": 0.72,
+     "foot": 1.27,
+     "spine": 0.49,
+     "neck_head": 0.65,
+     "collar": 0.63,
+     "upper_arm": 0.77,
+     "forearm": 1.32,
+     "hand": 1.5
+    },
+    "root_bias_deg": [
+     0.01,
+     0.02,
+     0.0
+    ],
+    "root_noise_deg": [
+     0.34,
+     0.22,
+     0.76
+    ],
+    "bone_tau_slow": 0.279,
+    "root_tau_slow": 0.189,
+    "joint_cm": {
+     "wrist": 0.44,
+     "elbow": 0.28,
+     "ankle": 0.66,
+     "knee": 0.39,
+     "head": 0.21,
+     "all": 0.29
+    }
+   },
+   "final": {
+    "bone_bias_deg": {
+     "hip": 9.41,
+     "thigh": 26.98,
+     "shin": 14.55,
+     "foot": 19.52,
+     "spine": 12.23,
+     "neck_head": 13.91,
+     "collar": 5.47,
+     "upper_arm": 7.02,
+     "forearm": 13.12,
+     "hand": 10.82
+    },
+    "bone_noise_deg": {
+     "hip": 6.77,
+     "thigh": 14.77,
+     "shin": 8.39,
+     "foot": 14.04,
+     "spine": 6.64,
+     "neck_head": 8.87,
+     "collar": 3.27,
+     "upper_arm": 3.57,
+     "forearm": 6.33,
+     "hand": 5.94
+    },
+    "root_bias_deg": [
+     6.37,
+     6.4,
+     0.48
+    ],
+    "root_noise_deg": [
+     2.71,
+     4.31,
+     9.04
+    ],
+    "bone_tau_slow": 1.137,
+    "root_tau_slow": 1.229,
+    "joint_cm": {
+     "wrist": 8.93,
+     "elbow": 7.77,
+     "ankle": 25.41,
+     "knee": 19.37,
+     "head": 11.85,
+     "all": 11.28
+    }
+   }
+  }
+ }
+}

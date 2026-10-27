@@ -1,0 +1,136 @@
+aug:
+  enable: true
+  prob: 0.8
+  camera_hz:
+  - 24.0
+  - 30.0
+  smooth_tau: 0.03
+  hold_s: 0.5
+  quick_s: 0.25
+  wrist_newest: true
+  lowpass_tau:
+    hip: 0.15
+    thigh: 0.15
+    shin: 0.15
+    foot: 0.15
+    spine: 0.1
+    neck_head: 0.1
+    collar: 0.1
+    upper_arm: 0.1
+    forearm: 0.1
+    hand: 0.1
+  root_lowpass_tau: 0.1
+  noise_smooth_tau: 0.3
+  profiles:
+    full:
+      weight: 0.75
+      bone_bias_deg:
+        hip: 0.0
+        thigh: 3.143
+        shin: 6.596
+        foot: 4.379
+        spine: 0.0
+        neck_head: 6.141
+        collar: 0.0
+        upper_arm: 0.0
+        forearm: 5.096
+        hand: 0.0
+      bone_slow_deg:
+        hip: 5.906
+        thigh: 12.826
+        shin: 10.654
+        foot: 8.804
+        spine: 6.442
+        neck_head: 11.463
+        collar: 2.922
+        upper_arm: 4.454
+        forearm: 7.583
+        hand: 9.297
+      bone_fast_deg:
+        hip: 0.0
+        thigh: 0.0
+        shin: 0.0
+        foot: 0.0
+        spine: 0.0
+        neck_head: 0.0
+        collar: 0.0
+        upper_arm: 0.0
+        forearm: 0.0
+        hand: 0.0
+      tau_slow: 3.388
+      tau_fast: 0.01
+      root_bias_deg:
+      - 1.867
+      - 0.0
+      - 0.0
+      root_slow_deg:
+      - 3.012
+      - 5.141
+      - 5.437
+      root_fast_deg:
+      - 0.0
+      - 0.0
+      - 0.0
+      root_tau_slow: 3.388
+      root_tau_fast: 0.01
+      gap_per_min: 10.86
+      gap_logn_mu: -2.857
+      gap_logn_sd: 0.796
+      gap_min_s: 0.02
+      redetect_resample: 0.1
+    waist_up:
+      weight: 0.25
+      bone_bias_deg:
+        hip: 8.425
+        thigh: 25.964
+        shin: 14.06
+        foot: 16.947
+        spine: 11.626
+        neck_head: 12.454
+        collar: 4.2
+        upper_arm: 6.186
+        forearm: 12.578
+        hand: 9.42
+      bone_slow_deg:
+        hip: 8.219
+        thigh: 16.28
+        shin: 9.885
+        foot: 17.118
+        spine: 8.148
+        neck_head: 11.166
+        collar: 3.825
+        upper_arm: 4.195
+        forearm: 6.922
+        hand: 6.457
+      bone_fast_deg:
+        hip: 0.0
+        thigh: 0.0
+        shin: 0.0
+        foot: 0.0
+        spine: 0.0
+        neck_head: 0.0
+        collar: 0.0
+        upper_arm: 0.0
+        forearm: 0.0
+        hand: 0.0
+      tau_slow: 1.23
+      tau_fast: 0.12
+      root_bias_deg:
+      - 6.727
+      - 5.839
+      - 0.246
+      root_slow_deg:
+      - 3.295
+      - 5.093
+      - 10.748
+      root_fast_deg:
+      - 0.0
+      - 0.0
+      - 0.0
+      root_tau_slow: 1.437
+      root_tau_fast: 0.12
+      gap_per_min: 9.57
+      gap_logn_mu: -2.305
+      gap_logn_sd: 1.014
+      gap_min_s: 0.02
+      redetect_resample: 0.4

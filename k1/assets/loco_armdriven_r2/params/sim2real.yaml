@@ -1,0 +1,190 @@
+policy_joints:
+- left_hip_pitch_joint
+- left_hip_roll_joint
+- left_hip_yaw_joint
+- left_knee_joint
+- left_ankle_pitch_joint
+- left_ankle_roll_joint
+- right_hip_pitch_joint
+- right_hip_roll_joint
+- right_hip_yaw_joint
+- right_knee_joint
+- right_ankle_pitch_joint
+- right_ankle_roll_joint
+- waist_yaw_joint
+- left_shoulder_pitch_joint
+- left_shoulder_roll_joint
+- left_shoulder_yaw_joint
+- left_elbow_joint
+- left_wrist_roll_joint
+- right_shoulder_pitch_joint
+- right_shoulder_roll_joint
+- right_shoulder_yaw_joint
+- right_elbow_joint
+- right_wrist_roll_joint
+step_dt: 0.02
+joint_properties:
+  left_hip_pitch_joint:
+    default_position: -0.18
+    stiffness: 120.0
+    damping: 3.0
+    position_limit: null
+  left_hip_roll_joint:
+    default_position: 0.0
+    stiffness: 120.0
+    damping: 3.0
+    position_limit: null
+  left_hip_yaw_joint:
+    default_position: 0.0
+    stiffness: 120.0
+    damping: 3.0
+    position_limit: null
+  left_knee_joint:
+    default_position: 0.36
+    stiffness: 200.0
+    damping: 5.0
+    position_limit: null
+  left_ankle_pitch_joint:
+    default_position: -0.18
+    stiffness: 20.0
+    damping: 2.0
+    position_limit: null
+  left_ankle_roll_joint:
+    default_position: 0.0
+    stiffness: 20.0
+    damping: 2.0
+    position_limit: null
+  right_hip_pitch_joint:
+    default_position: -0.18
+    stiffness: 120.0
+    damping: 3.0
+    position_limit: null
+  right_hip_roll_joint:
+    default_position: 0.0
+    stiffness: 120.0
+    damping: 3.0
+    position_limit: null
+  right_hip_yaw_joint:
+    default_position: 0.0
+    stiffness: 120.0
+    damping: 3.0
+    position_limit: null
+  right_knee_joint:
+    default_position: 0.36
+    stiffness: 200.0
+    damping: 5.0
+    position_limit: null
+  right_ankle_pitch_joint:
+    default_position: -0.18
+    stiffness: 20.0
+    damping: 2.0
+    position_limit: null
+  right_ankle_roll_joint:
+    default_position: 0.0
+    stiffness: 20.0
+    damping: 2.0
+    position_limit: null
+  waist_yaw_joint:
+    default_position: 0.0
+    stiffness: 120.0
+    damping: 3.0
+    position_limit: null
+  left_shoulder_pitch_joint:
+    default_position: 0.2
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  left_shoulder_roll_joint:
+    default_position: 0.25
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  left_shoulder_yaw_joint:
+    default_position: 0.0
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  left_elbow_joint:
+    default_position: 0.95
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  left_wrist_roll_joint:
+    default_position: 0.15
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  right_shoulder_pitch_joint:
+    default_position: 0.2
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  right_shoulder_roll_joint:
+    default_position: -0.25
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  right_shoulder_yaw_joint:
+    default_position: 0.0
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  right_elbow_joint:
+    default_position: 0.95
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+  right_wrist_roll_joint:
+    default_position: -0.15
+    stiffness: 40.0
+    damping: 2.0
+    position_limit: null
+commands:
+  base_velocity:
+    ranges:
+      lin_vel_x: [-0.5, 1.0]
+      lin_vel_y: [-0.3, 0.3]
+      ang_vel_z: [-1.0, 1.0]
+      heading: [-3.14, 3.14]
+actions:
+  joint_pos:
+    clip: null
+    scale: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25,
+      0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+    offset: [-0.18, 0.0, 0.0, 0.36, -0.18, 0.0, -0.18, 0.0, 0.0, 0.36, -0.18, 0.0,
+      0.0, 0.2, 0.25, 0.0, 0.95, 0.15, 0.2, -0.25, 0.0, 0.95, -0.15]
+observations:
+  base_ang_vel:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 5
+  projected_gravity:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 5
+  velocity_commands:
+    params:
+      command_name: base_velocity
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 5
+  joint_pos:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 5
+  joint_vel:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 5
+  actions:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 5

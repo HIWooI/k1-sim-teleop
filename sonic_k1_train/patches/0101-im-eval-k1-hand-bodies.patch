@@ -1,0 +1,23 @@
+Portions derived from NVIDIA GR00T-WholeBodyControl (GEAR-SONIC), Copyright (c) NVIDIA CORPORATION & AFFILIATES,
+licensed under the Apache License 2.0 (https://github.com/NVlabs/GR00T-WholeBodyControl). Modified for the K1 port.
+
+diff --git a/gear_sonic/trl/callbacks/im_eval_callback.py b/gear_sonic/trl/callbacks/im_eval_callback.py
+index 83a3e5a..2f7c4fe 100644
+--- a/gear_sonic/trl/callbacks/im_eval_callback.py
++++ b/gear_sonic/trl/callbacks/im_eval_callback.py
+@@ -560,6 +560,15 @@ class ImEvalCallback(TrainerCallback):
+                     "left_wrist_yaw_link",
+                     "right_wrist_yaw_link",
+                 ]
++                # sonic_k1_train: robots without G1's *_wrist_yaw_link (K1: the hand body
++                # *_wrist_roll_rubber_hand) -> the tracked wrist/hand body of that side
++                vr_3points_subset_names = [
++                    n if n in body_names else next(
++                        b for b in body_names
++                        if b.startswith(n.split("_")[0] + "_") and ("wrist" in b or "hand" in b)
++                    )
++                    for n in vr_3points_subset_names
++                ]
+                 other_upper_bodies_subset_names = [
+                     "pelvis",
+                     "left_shoulder_roll_link",

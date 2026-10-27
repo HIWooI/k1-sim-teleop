@@ -1,0 +1,40 @@
+Portions derived from NVIDIA GR00T-WholeBodyControl (GEAR-SONIC), Copyright (c) NVIDIA CORPORATION & AFFILIATES,
+licensed under the Apache License 2.0 (https://github.com/NVlabs/GR00T-WholeBodyControl). Modified for the K1 port.
+
+diff -ruN a/gear_sonic/envs/manager_env/mdp/commands.py b/gear_sonic/envs/manager_env/mdp/commands.py
+--- a/gear_sonic/envs/manager_env/mdp/commands.py
++++ b/gear_sonic/envs/manager_env/mdp/commands.py
+@@ -67,6 +67,25 @@
+     return per_env_num_frames, frame_choices
+ 
+ 
++def _check_robot_order(robot, isaac_lab_joints, mapping):
++    """sonic_k1: the hand-written Isaac Lab body list / index maps must match the articulation the URDF
++    importer actually built — otherwise motion DOFs are written to the wrong joints with no error.
++    Fixed-joint links that were not merged (e.g. head_link) are ignored. Warns by default; raises when
++    SONIC_STRICT_ROBOT_ORDER=1 (set in sonic_k1/train.env)."""
++    sim_bodies = [b for b in robot.body_names if b in set(isaac_lab_joints)]
++    problems = []
++    if sim_bodies != list(isaac_lab_joints):
++        missing = [b for b in isaac_lab_joints if b not in robot.body_names]
++        problems.append(f"body order {sim_bodies} != isaaclab_joints {list(isaac_lab_joints)} (missing: {missing})")
++    if len(robot.joint_names) != len(mapping["isaaclab_to_mujoco_dof"]):
++        problems.append(f"{len(robot.joint_names)} sim joints vs {len(mapping['isaaclab_to_mujoco_dof'])} mapped dofs")
++    if problems:
++        msg = "[robot order check] " + "; ".join(problems)
++        if os.environ.get("SONIC_STRICT_ROBOT_ORDER", "0") == "1":
++            raise RuntimeError(msg)
++        print("WARNING " + msg)
++
++
+ @configclass
+ class CommandsCfg:
+     """Command specifications for the MDP."""
+@@ -170,6 +189,7 @@
+         )
+ 
+         isaac_lab_joints = env.cfg.isaaclab_to_mujoco_mapping["isaaclab_joints"]
++        _check_robot_order(self.robot, isaac_lab_joints, env.cfg.isaaclab_to_mujoco_mapping)
+ 
+         self.isaaclab_to_mujoco_dof = env.cfg.isaaclab_to_mujoco_mapping["isaaclab_to_mujoco_dof"]
+         self.mujoco_to_isaaclab_dof = env.cfg.isaaclab_to_mujoco_mapping["mujoco_to_isaaclab_dof"]

@@ -1,0 +1,36 @@
+k1-sim-teleop
+Copyright 2026 HIWooI
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes software derived from NVIDIA GR00T-WholeBodyControl (GEAR-SONIC),
+Copyright (c) NVIDIA CORPORATION & AFFILIATES, licensed under the Apache License, Version 2.0.
+https://github.com/NVlabs/GR00T-WholeBodyControl
+Derived files (modified): sonic_k1/overlay/gear_sonic/**, sonic_k1_train/overlay/gear_sonic/** (configuration files),
+sonic_k1/patches/*.patch, sonic_k1_train/patches/*.patch, sonic/{deploy,params,rot,motion,sim,runner,smpl,stream,gemx}.py,
+k1live/planner.py, linux/zmq_v3_compat.py, linux/sim_loop_keys.py, linux/compat/zmq_v3_check.cpp.
+
+This product includes robot description files derived from ROBOTIS AI Sapiens
+(ai_sapiens_description, ai_sapiens_sim2real), Copyright ROBOTIS CO., LTD.,
+licensed under the Apache License, Version 2.0. https://github.com/ROBOTIS-GIT/ai_sapiens
+Files: k1/assets/k1.urdf, k1/assets/k1_config.yaml,
+sonic_k1/overlay/gear_sonic/data/assets/robot_description/urdf/k1/k1.urdf (modified),
+sonic_k1/overlay/gear_sonic/data/assets/robot_description/mjcf/k1.xml (modified).
+
+This product includes K1 actuator parameters from ROBOTIS cyclo_lab (K1_rev1),
+Copyright ROBOTIS CO., LTD., licensed under the Apache License, Version 2.0.
+https://github.com/ROBOTIS-GIT/cyclo_lab
+File: sonic_k1/overlay/gear_sonic/envs/manager_env/robots/k1.py (constants).
+
+This product includes k1/assets/student_asset/expert_adapter.py (Copyright 2026 ROBOTIS CO., LTD.,
+Apache License, Version 2.0, see its file header) and the policy deployment parameter files
+k1/assets/student_asset/params/sim2real.yaml and k1/assets/loco_armdriven_r2/params/sim2real.yaml, which originate
+from ROBOTIS CO., LTD. and are included with the permission of ROBOTIS CO., LTD. The corresponding ROBOTIS policy
+weights (policy.onnx) are not included.
+
+Model weights downloaded at setup time (not distributed with this repository):
+GEAR-SONIC policies and planner_sonic.onnx: Licensed by NVIDIA Corporation under the NVIDIA Open Model License.
+GEM-X weights: Licensed by NVIDIA Corporation under the NVIDIA Open Model License.
+
+NVIDIA, GEAR-SONIC, ROBOTIS and AI Sapiens are trademarks of their respective owners. This project is not
+affiliated with or endorsed by them.

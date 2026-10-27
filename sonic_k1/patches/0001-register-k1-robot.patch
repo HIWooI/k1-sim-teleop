@@ -1,0 +1,74 @@
+Portions derived from NVIDIA GR00T-WholeBodyControl (GEAR-SONIC), Copyright (c) NVIDIA CORPORATION & AFFILIATES,
+licensed under the Apache License 2.0 (https://github.com/NVlabs/GR00T-WholeBodyControl). Modified for the K1 port.
+
+diff -ruN a/gear_sonic/envs/manager_env/modular_tracking_env_cfg.py b/gear_sonic/envs/manager_env/modular_tracking_env_cfg.py
+--- a/gear_sonic/envs/manager_env/modular_tracking_env_cfg.py
++++ b/gear_sonic/envs/manager_env/modular_tracking_env_cfg.py
+@@ -16,7 +16,7 @@
+ import pxr
+ 
+ from gear_sonic.envs.manager_env.mdp import terrain
+-from gear_sonic.envs.manager_env.robots import g1, h2
++from gear_sonic.envs.manager_env.robots import g1, h2, k1
+ from gear_sonic.trl.utils import common
+ 
+ 
+@@ -1005,6 +1005,11 @@
+                 "robot_cfg": h2.H2_CFG,
+                 "action_scale": h2.H2_ACTION_SCALE,
+                 "isaaclab_to_mujoco_mapping": h2.H2_ISAACLAB_TO_MUJOCO_MAPPING,
++            },
++            "k1": {
++                "robot_cfg": k1.K1_CFG,
++                "action_scale": k1.K1_ACTION_SCALE,
++                "isaaclab_to_mujoco_mapping": k1.K1_ISAACLAB_TO_MUJOCO_MAPPING,
+             },
+         }
+ 
+diff -ruN a/gear_sonic/envs/manager_env/robots/__init__.py b/gear_sonic/envs/manager_env/robots/__init__.py
+--- a/gear_sonic/envs/manager_env/robots/__init__.py
++++ b/gear_sonic/envs/manager_env/robots/__init__.py
+@@ -1,4 +1,5 @@
+ # Re-export robot configs for backward compatibility.
+-# Import from gear_sonic.envs.manager_env.robots.g1 or .h2 directly for new code.
++# Import from gear_sonic.envs.manager_env.robots.g1, .h2 or .k1 directly for new code.
+ from gear_sonic.envs.manager_env.robots.g1 import *  # noqa: F401,F403
+ from gear_sonic.envs.manager_env.robots.h2 import *  # noqa: F401,F403
++from gear_sonic.envs.manager_env.robots.k1 import *  # noqa: F401,F403
+diff -ruN a/gear_sonic/trl/utils/order_converter.py b/gear_sonic/trl/utils/order_converter.py
+--- a/gear_sonic/trl/utils/order_converter.py
++++ b/gear_sonic/trl/utils/order_converter.py
+@@ -202,6 +202,33 @@
+     FOOT_BODY_NAMES = ["left_ankle_roll_link", "right_ankle_roll_link"]
+ 
+ 
++class K1Converter(IsaacLabMuJoCoConverter):
++    """ROBOTIS K1 (23 DOF, 24 bodies) joint/body order converter between IsaacLab and MuJoCo."""
++
++    def __init__(self):
++        from gear_sonic.envs.manager_env.robots.k1 import (
++            K1_ISAACLAB_JOINTS,
++            K1_ISAACLAB_TO_MUJOCO_BODY,
++            K1_ISAACLAB_TO_MUJOCO_DOF,
++            K1_MUJOCO_TO_ISAACLAB_BODY,
++            K1_MUJOCO_TO_ISAACLAB_DOF,
++        )
++
++        self.JOINT_NAMES = K1_ISAACLAB_JOINTS
++        self.DOF_MAPPINGS = {
++            ("isaaclab", "mujoco"): K1_ISAACLAB_TO_MUJOCO_DOF,
++            ("mujoco", "isaaclab"): K1_MUJOCO_TO_ISAACLAB_DOF,
++        }
++        self.BODY_MAPPINGS = {
++            ("isaaclab", "mujoco"): K1_ISAACLAB_TO_MUJOCO_BODY,
++            ("mujoco", "isaaclab"): K1_MUJOCO_TO_ISAACLAB_BODY,
++        }
++
++    # K1 has a single wrist joint; the hand body is the end effector
++    VR_3POINTS_BODY_NAMES = ["torso_link", "left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand"]
++    FOOT_BODY_NAMES = ["left_ankle_roll_link", "right_ankle_roll_link"]
++
++
+ def load_qpos_from_csv(csv_path: str) -> torch.Tensor:
+     """Load qpos [T, D] from CSV."""
+     import pandas as pd

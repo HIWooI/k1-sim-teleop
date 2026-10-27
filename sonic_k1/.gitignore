@@ -1,0 +1,4 @@
+# ROBOTIS K1 meshes are staged from ai_sapiens_description (scripts/stage_assets.py), not versioned here
+overlay/gear_sonic/data/assets/robot_description/urdf/k1/meshes/
+# motion data is regenerated from the K1 CSVs (scripts/k1_csv_to_pkl.py)
+data/robot/*.pkl

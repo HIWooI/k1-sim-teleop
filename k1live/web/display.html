@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K1 관객 화면</title>
+<link rel="icon" href="/static/favicon.svg">
+<link rel="stylesheet" href="/static/display.css">
+</head>
+<body>
+<div id="stage">
+  <header>
+    <div class="brand">
+      <span id="title">K1 텔레옵</span>
+      <span id="subtitle"></span>
+    </div>
+    <div class="live" id="live"><i></i>LIVE</div>
+  </header>
+
+  <main id="live-view">
+    <section class="pane cam">
+      <img id="cam" alt="">
+      <span class="chip" id="label-cam">카메라</span>
+      <div class="msg" id="msg"></div>
+    </section>
+    <section class="pane robot">
+      <img id="robot" alt="">
+      <span class="chip" id="label-robot">AI Sapiens K1 · 물리 시뮬레이션</span>
+      <span class="chip walk" id="walk">걷는 중</span>
+    </section>
+  </main>
+
+  <section id="fallback-view" hidden>
+    <video id="fb" muted playsinline preload="auto"></video>
+    <span class="chip" id="label-fb">녹화 영상</span>
+    <div class="rest" id="rest" hidden>잠시 후 다시 시작합니다</div>
+  </section>
+
+  <footer id="guide">카메라 앞에 서서 팔을 움직여 보세요 · 앞으로 한 걸음 나오면 로봇이 걸어요</footer>
+</div>
+<script src="/static/display.js"></script>
+</body>
+</html>

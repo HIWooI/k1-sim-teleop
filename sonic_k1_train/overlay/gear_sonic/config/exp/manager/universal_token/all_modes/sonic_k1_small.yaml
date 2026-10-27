@@ -1,0 +1,182 @@
+# @package _global_
+# Portions derived from NVIDIA GR00T-WholeBodyControl (GEAR-SONIC), Copyright (c) NVIDIA CORPORATION & AFFILIATES,
+# licensed under the Apache License 2.0 (https://github.com/NVlabs/GR00T-WholeBodyControl). Modified for the K1 port.
+# SONIC K1 small — single-GPU, small-data K1 run (sonic_k1_train). Same recipe as sonic_k1.yaml of the
+# sonic_k1 package (= sonic_release remapped to K1 body names: universal token, FSQ, 3 encoders, g1_dyn decoder,
+# adaptive motion sampling, level0_4 domain randomisation/pushes, 10-frame x 0.1 s future reference), with
+# ~4-10x smaller MLPs because the motion set is ~30 min instead of 700 h. K1 has no SMPL data:
+# smpl_motion_file=dummy -> motion_has_smpl=False, so SMPL envs / SMPL latent losses are masked out and the
+# encoders trained are the robot (g1-style) one and teleop.
+# Lookahead variant: sonic_k1_small_la4.yaml (4 future frames x 20 ms = 80 ms).
+
+defaults:
+  - /algo: ppo_im_phc
+  - /manager_env: base_env
+  - /callbacks/read_eval
+  - /callbacks/im_resample
+  - /aux_losses: universal_token/g1_recon_and_all_latent
+  - override /trainer: trl_ppo_aux
+  - override /actor_critic: universal_token/all_mlp_v1
+  - override /manager_env/observations/tokenizer: unitoken_all_noz
+  - override /manager_env/observations/policy: local_dir_hist
+  - override /manager_env/observations/critic: privileged_mf_hist
+  - override /manager_env/events: tracking/level0_4
+  - override /manager_env/terminations: tracking/base_adaptive_strict_ori_foot_xyz
+  - override /manager_env/rewards: tracking/base_5point_local_feet_acc
+
+use_manager_env: true
+
+exp_base: ${hydra:runtime.choices.exp}
+exp_var: test
+experiment_name: ${exp_base}_${exp_var}
+experiment_dir: ${base_dir}/${project_name}/${experiment_name}-${timestamp}
+
+num_envs: 4096
+project_name: TRL_K1_Track
+
+actor_prop_history_length: 10
+actor_actions_history_length: 10
+
+critic_prop_history_length: 10
+critic_actions_history_length: 10
+
+manager_env:
+  rewards:
+    feet_acc:
+      weight: -2.5e-6
+    undesired_contacts:
+      params:
+        sensor_cfg:
+          body_names:
+            - "^(?!left_ankle_roll_link$)(?!right_ankle_roll_link$)(?!left_wrist_roll_rubber_hand$)(?!right_wrist_roll_rubber_hand$)(?!left_elbow_link$)(?!right_elbow_link$).+$"
+    anti_shake_ang_vel:
+      params:
+        body_names: ["left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand"]
+  observations:
+    tokenizer:
+      joint_pos_multi_future_wrist_for_smpl:
+        params:
+          joints_idx: [21, 22]  # Isaac Lab indices of left/right_wrist_roll_joint
+  events:
+    randomize_rigid_body_mass:
+      params:
+        asset_cfg:
+          body_names: ".*_wrist_roll_rubber_hand|torso_link"
+  terminations:
+    ee_body_pos:
+      params:
+        body_names:
+          - "left_ankle_roll_link"
+          - "right_ankle_roll_link"
+          - "left_wrist_roll_rubber_hand"
+          - "right_wrist_roll_rubber_hand"
+  config:
+    robot:
+      type: k1
+    terrain_type: trimesh
+  commands:
+    motion:
+      anchor_body: "pelvis"
+      vr_3point_body: ["left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand", "torso_link"]
+      vr_3point_body_offset: [[0.15, 0.0, 0.0], [0.15, 0.0, 0.0], [0.0, 0.0, 0.45]]
+      reward_point_body: ["torso_link", "left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand"]
+      reward_point_body_offset: [[0.0, 0.0, 0.5], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+      body_names: [
+        "pelvis",
+        "left_hip_roll_link",
+        "left_knee_link",
+        "left_ankle_roll_link",
+        "right_hip_roll_link",
+        "right_knee_link",
+        "right_ankle_roll_link",
+        "torso_link",
+        "left_shoulder_roll_link",
+        "left_elbow_link",
+        "left_wrist_roll_rubber_hand",
+        "right_shoulder_roll_link",
+        "right_elbow_link",
+        "right_wrist_roll_rubber_hand",
+      ]
+      num_future_frames: 10
+      dt_future_ref_frames: 0.1
+      smpl_num_future_frames: 10
+      smpl_dt_future_ref_frames: 0.02
+      cat_upper_body_poses: true
+      cat_upper_body_poses_prob: 0.5
+
+      freeze_frame_aug: true
+      teleop_sample_prob_when_smpl: 0.5
+
+      motion_lib_cfg:
+        adaptive_sampling:
+          adp_samp_failure_rate_max_over_mean: 200
+        motion_file: null
+        smpl_motion_file: dummy
+        smpl_y_up: true
+        asset:
+          assetFileName: "k1.xml"
+
+callbacks:
+  model_save:
+    save_frequency: 500
+
+algo:
+  config:
+    empty_cache_every_n_ppo_epoch: -1
+    num_steps_per_env: 24
+    use_clampped_std: true
+    std_clamp_min: 0.001
+    std_clamp_max: 0.5
+    max_grad_norm: 0.1
+    num_learning_iterations: 6000
+    actor:
+      backbone:
+        reencode_smpl_g1_recon: true
+        encoders:
+          g1:
+            inputs: ["command_multi_future_nonflat", "motion_anchor_ori_b_mf_nonflat"]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [512, 512, 256]
+          teleop:
+            inputs:
+              [
+                "command_multi_future_lower_body",
+                "vr_3point_local_target",
+                "vr_3point_local_orn_target",
+                "motion_anchor_ori_b",
+              ]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [512, 512, 256]
+          smpl:
+            inputs:
+              [
+                "smpl_joints_multi_future_local_nonflat",
+                "smpl_root_ori_b_multi_future",
+                "joint_pos_multi_future_wrist_for_smpl",
+              ]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [256, 256]
+        decoders:
+          g1_kin:
+            outputs: ["command_multi_future_nonflat", "motion_anchor_ori_b_mf_nonflat"]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [512, 512, 256]
+          g1_dyn:
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [1024, 512, 512, 256]
+
+    critic:
+      backbone:
+        module_config_dict:
+          layer_config:
+            hidden_dims: [1024, 1024, 512, 256]

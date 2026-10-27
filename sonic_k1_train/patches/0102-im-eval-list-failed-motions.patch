@@ -1,0 +1,16 @@
+Portions derived from NVIDIA GR00T-WholeBodyControl (GEAR-SONIC), Copyright (c) NVIDIA CORPORATION & AFFILIATES,
+licensed under the Apache License 2.0 (https://github.com/NVlabs/GR00T-WholeBodyControl). Modified for the K1 port.
+
+diff --git a/gear_sonic/trl/callbacks/im_eval_callback.py b/gear_sonic/trl/callbacks/im_eval_callback.py
+index 2f7c4fe..64819b5 100644
+--- a/gear_sonic/trl/callbacks/im_eval_callback.py
++++ b/gear_sonic/trl/callbacks/im_eval_callback.py
+@@ -804,6 +804,8 @@ class ImEvalCallback(TrainerCallback):
+                 if self.accelerator.is_main_process:
+                     print(f"Success Rate: {success_rate:.10f}")
+                     print(f"Progress Rate: {progress_rate:.10f}")
++                    # sonic_k1_train: which clips failed (small motion sets -> worth listing)
++                    print(f"Failed motions ({len(failed_keys)}): {sorted(str(k) for k in failed_keys)}")
+                     if has_obj_metrics:
+                         print(
+                             f"Object Pos Error (all): {obj_pos_err_mean:.4f}m | "

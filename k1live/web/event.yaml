@@ -1,0 +1,84 @@
+# K1 live demo — event settings (read by k1live/service.py at start; restart the service after editing).
+# Keys left out keep the defaults in k1live/service.py (DEFAULTS). Operator choices made in the panel
+# (camera, walking mode, person region, max speed, mirror, backend, idle time, auto calibrate/start, fallback) are
+# stored separately in logs/k1live/settings.json and win over this file.
+
+# control backend at the first start (afterwards the panel's last choice): hybrid = split arms while standing, K1 SONIC
+# walking with the planner's gait while walking (docs/architecture.md); split = ROBOTIS loco legs always. Without the hybrid
+# files (models/k1/k1s_walk3/deploy/k1s_walk3_005000, models/planner/planner_sonic.onnx, staged K1 meshes) -> split
+backend: hybrid
+# hybrid: the K1 SONIC walking checkpoint (deploy dir with model_encoder/decoder.onnx; relative = repo). walk4 7000 =
+# the foot-lift fine-tune, picked from 5500-8000 (docs/training.md: foot lift 3.0 -> 4.8 cm, stance 0.27 -> 0.19 m).
+# Trained checkpoints are not distributed with this repository (docs/training.md).
+# Missing folder -> the built-in walk3 5000 (models/k1/k1s_walk3/deploy/k1s_walk3_005000); null = that default too.
+hybrid_variant: models/k1/k1s_walk4/deploy/k1s_walk4_007000
+
+# arm path at the first start (afterwards the panel's 설정 › 팔 경로): improved arm path (docs/architecture.md):
+# bone-direction IK in the sender (--arm-ik), PD arms with gravity compensation in sim_server (--arm-mode) and a faster
+# arm reference (--arm-vmax rad/s, --arm-amax rad/s^2); classic = position IK + mimic student arms, 6 rad/s / 80 rad/s^2.
+# The four values below are what "improved" uses. Changing the path restarts the camera and simulation processes.
+arm_path: improved
+arm_ik: dir
+arm_mode: pd
+arm_vmax: 12
+arm_amax: 150
+
+# perception at the first start (afterwards the panel's 설정 › 인식): mediapipe = MediaPipe Pose on the CPU (any laptop);
+# gemx = GEM-X on an NVIDIA GPU (k1live/sender_gemx.py, docs/architecture.md): whole-body 3D with depth, for a far,
+# full-body view (lecture hall). Loading takes 20-40 s (the display shows the fallback video meanwhile); without CUDA /
+# the GEM-X environment / its checkpoint the service runs MediaPipe by itself (panel banner says why).
+perception: gemx       # lecture hall, full body, far -> GEM-X (falls back to MediaPipe without CUDA)
+gemx:
+  perception_dir: null   # GEM-X perception folder (demo_webcam.py, GEM-X/ inside); null = $K1LIVE_GEMX_PERCEPTION or third_party/gemx_perception
+  python: null           # GEM-X venv python; null = <perception_dir>/GEM-X/.venv/bin/python
+  cmd: null              # GEM-X on another machine, e.g. "ssh gpu-host <GEM-X venv python> <repo>/k1live/gemx_worker.py --serve"
+  hfov: 0                # camera horizontal field of view, degrees (0 = GEM-X's guess); scales walking distances only
+  arm_src: ik            # ik = bone-direction IK (frontal angle from 2D, depth from GEM-X) | mlp = distilled retarget network
+  max_h: 1080            # camera frames taller than this are downscaled before GEM-X
+
+# walking mode at the first start (afterwards the panel's last choice): presenter = the camera watches a presenter
+# (stage / podium): body turns never turn the robot, it walks only while the presenter strolls sideways;
+# visitor = a visitor 2.5-3.5 m in front of the camera steps / turns to walk the robot. docs/architecture.md
+loco_profile: presenter
+# person search region [x0, y0, x1, y1] (0..1 of the camera image, unmirrored) or null = whole frame; usually
+# drawn in the panel (설정 › 사람 찾을 영역) instead
+crop: null
+
+# audience display texts (no slogans over the person's video)
+title: "K1 텔레옵"
+subtitle_sonic: "GEAR-SONIC 방식 전신 제어"
+guide: "카메라 앞에 서서 팔을 움직여 보세요 · 앞으로 한 걸음 나오면 로봇이 걸어요"
+guide_no_walk: "카메라 앞에 서서 팔을 움직여 보세요"
+guide_presenter: "발표자의 팔 동작을 로봇이 실시간으로 따라 합니다"   # walking mode presenter (no welcome bubbles)
+msg_welcome: "안녕하세요! 정면을 보고 편하게 서 주세요"
+msg_calibrating: "그대로 잠시만 서 계세요"
+msg_come_closer: "카메라 앞에 서 주세요"
+
+# where the event media lives ("{event_dir}" below): default $K1_EVENT_VIDEOS or videos/event (relative = repo);
+# env K1LIVE_EVENT_DIR overrides it (other laptop). Media is not part of this repository (docs/runbook.md).
+# event_dir: videos/event
+# played in a loop on the audience display while the camera or the simulation is down (not copied, just paths)
+fallback_videos:
+  - "{event_dir}/fallback/demo_1.mp4"   # recorded demo reels (person | robot), e.g. from scripts/render/render_reel.py
+  - "{event_dir}/fallback/demo_2.mp4"
+# offered as input sources in the panel (rehearsal without a camera); globs allowed, relative = repo
+rehearsal_videos:
+  - "{event_dir}/event_*.mp4"
+  - "videos/k1live_*.mp4"
+
+cameras: [0, 1, 2]
+
+# timings (seconds)
+idle_after_s: 20        # nobody in view this long while following -> idle greeting loop
+fallback_after_s: 2.0   # camera or simulation bad this long -> fallback video
+live_after_s: 3.0       # both good again this long -> back to live
+fall_reset_s: 6.0       # robot still down after this -> service sends reset (the simulation itself resets in 3 s)
+grace_s: 45             # a (re)started process may take this long to report (model loading)
+stale_s: 3.0            # then: no status for this long -> restart it
+# a child above this is restarted while nobody is followed; measured start-up peaks: sim 3.9-4.7 GB, GEM-X sender 7.3 GB
+mem_limit_mb: {sender: 1500, sim: 6000, sender_gemx: 10000}
+
+# display look
+display_cam_flip: false # true if the camera picture should be mirrored on the display
+cam_fit: cover          # cover (fill, crop edges) | contain (whole picture)
+robot_fit: cover

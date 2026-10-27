@@ -1,0 +1,283 @@
+# @package _global_
+# Portions derived from NVIDIA GR00T-WholeBodyControl (GEAR-SONIC), Copyright (c) NVIDIA CORPORATION & AFFILIATES,
+# licensed under the Apache License 2.0 (https://github.com/NVlabs/GR00T-WholeBodyControl). Modified for the K1 port.
+# k1s_bones2: sonic_k1_small_la4_bones (K1 SONIC + the BONES-SEED SMPL human encoder) resumed
+# from k1s_bones it20000 with two changes, everything else = sonic_k1_small_la4_bones.yaml (same data, same encoders):
+# 1) walk4's feet-only relative position reward (tracking_relative_body_pos_error on the two ankle bodies, std 0.06 m,
+#    weight 1.0, in the unused `motion_5point_local_pos` slot): bones lifts its feet 1.4 cm, walk4 7000 2.4 cm.
+# 2) GEM-X-like corruption of the SMPL encoder input only (overlay mdp/smpl_gemx_aug.py; reference motion, rewards,
+#    terminations and the critic stay clean): pose error per bone group (bias + slow OU), pelvis-frame wobble, GEM-X's
+#    causal smoothing, camera rate 24-30 fps + the backend's 30 ms smoothing, dropouts held <= 0.5 s then cross-faded
+#    back (PresenceGate), newest wrist roll in every future frame. Numbers fitted from the live GEM-X stream of
+#    every-frame real-time-worker dumps vs the training SMPL of the same clips (scripts/gemx_aug_stats.py fit, arm groups x 0.35,
+#    sonic_k1_train/data/gemx_aug/gemx_aug_{target,params}.yaml/json, docs/training.md).
+#   SONIC_K1_MOTIONS=.../k1_bones_train bash train.sh train k1s_bones2 sonic_k1_small_la4_bones2 4096 25000 \
+#     ++checkpoint=<k1s_bones2 run dir with a copy of k1s_bones model_step_020000.pt> +resume=true \
+#     ++manager_env.commands.motion.motion_lib_cfg.smpl_motion_file=.../k1_bones_train/smpl
+
+# GEM-X stream model (scripts/gemx_aug_stats.py fit -> sonic_k1_train/data/gemx_aug/gemx_aug_params.yaml)
+smpl_gemx_aug:
+  enable: true
+  prob: 0.8
+  camera_hz: [24.0, 30.0]
+  smooth_tau: 0.03
+  hold_s: 0.5
+  quick_s: 0.25
+  wrist_newest: true
+  lowpass_tau: {hip: 0.15, thigh: 0.15, shin: 0.15, foot: 0.15, spine: 0.1, neck_head: 0.1, collar: 0.1, upper_arm: 0.1, forearm: 0.1,
+    hand: 0.1}
+  root_lowpass_tau: 0.1
+  noise_smooth_tau: 0.3
+  profiles:
+    full:
+      weight: 0.75
+      bone_bias_deg: {hip: 0.0, thigh: 3.143, shin: 6.596, foot: 4.379, spine: 0.0, neck_head: 6.141, collar: 0.0, upper_arm: 0.0,
+        forearm: 5.096, hand: 0.0}
+      bone_slow_deg: {hip: 5.906, thigh: 12.826, shin: 10.654, foot: 8.804, spine: 6.442, neck_head: 11.463, collar: 2.922,
+        upper_arm: 4.454, forearm: 7.583, hand: 9.297}
+      bone_fast_deg: {hip: 0.0, thigh: 0.0, shin: 0.0, foot: 0.0, spine: 0.0, neck_head: 0.0, collar: 0.0, upper_arm: 0.0,
+        forearm: 0.0, hand: 0.0}
+      tau_slow: 3.388
+      tau_fast: 0.01
+      root_bias_deg: [1.867, 0.0, 0.0]
+      root_slow_deg: [3.012, 5.141, 5.437]
+      root_fast_deg: [0.0, 0.0, 0.0]
+      root_tau_slow: 3.388
+      root_tau_fast: 0.01
+      gap_per_min: 10.86
+      gap_logn_mu: -2.857
+      gap_logn_sd: 0.796
+      gap_min_s: 0.02
+      redetect_resample: 0.1
+    waist_up:
+      weight: 0.25
+      bone_bias_deg: {hip: 8.425, thigh: 25.964, shin: 14.06, foot: 16.947, spine: 11.626, neck_head: 12.454, collar: 4.2,
+        upper_arm: 6.186, forearm: 12.578, hand: 9.42}
+      bone_slow_deg: {hip: 8.219, thigh: 16.28, shin: 9.885, foot: 17.118, spine: 8.148, neck_head: 11.166, collar: 3.825,
+        upper_arm: 4.195, forearm: 6.922, hand: 6.457}
+      bone_fast_deg: {hip: 0.0, thigh: 0.0, shin: 0.0, foot: 0.0, spine: 0.0, neck_head: 0.0, collar: 0.0, upper_arm: 0.0,
+        forearm: 0.0, hand: 0.0}
+      tau_slow: 1.23
+      tau_fast: 0.12
+      root_bias_deg: [6.727, 5.839, 0.246]
+      root_slow_deg: [3.295, 5.093, 10.748]
+      root_fast_deg: [0.0, 0.0, 0.0]
+      root_tau_slow: 1.437
+      root_tau_fast: 0.12
+      gap_per_min: 9.57
+      gap_logn_mu: -2.305
+      gap_logn_sd: 1.014
+      gap_min_s: 0.02
+      redetect_resample: 0.4
+
+defaults:
+  - /algo: ppo_im_phc
+  - /manager_env: base_env
+  - /callbacks/read_eval
+  - /callbacks/im_resample
+  - /aux_losses: universal_token/g1_recon_and_all_latent
+  - override /trainer: trl_ppo_aux
+  - override /actor_critic: universal_token/all_mlp_v1
+  - override /manager_env/observations/tokenizer: unitoken_all_noz
+  - override /manager_env/observations/policy: local_dir_hist
+  - override /manager_env/observations/critic: privileged_mf_hist
+  - override /manager_env/events: tracking/level0_4
+  - override /manager_env/terminations: tracking/base_adaptive_strict_ori_foot_xyz
+  - override /manager_env/rewards: tracking/base_5point_local_feet_acc
+
+use_manager_env: true
+
+exp_base: ${hydra:runtime.choices.exp}
+exp_var: test
+experiment_name: ${exp_base}_${exp_var}
+experiment_dir: ${base_dir}/${project_name}/${experiment_name}-${timestamp}
+
+num_envs: 4096
+project_name: TRL_K1_Track
+
+actor_prop_history_length: 10
+actor_actions_history_length: 10
+
+critic_prop_history_length: 10
+critic_actions_history_length: 10
+
+manager_env:
+  rewards:
+    tracking_relative_body_ori_weighted:   # arm links only (elbow = shoulder yaw, hand = wrist roll), see header
+      _target_: isaaclab.managers.RewardTermCfg
+      func: gear_sonic.envs.manager_env.mdp:tracking_relative_body_ori_weighted_error
+      weight: 1.0
+      params:
+        command_name: "motion"
+        std: 0.3
+        body_names: ["left_elbow_link", "left_wrist_roll_rubber_hand", "right_elbow_link", "right_wrist_roll_rubber_hand"]
+    tracking_body_pos:   # = pelvis linear velocity tracking (slot reuse, see the header)
+      _target_: isaaclab.managers.RewardTermCfg
+      func: gear_sonic.envs.manager_env.mdp:tracking_body_linvel_error
+      weight: 1.0
+      params:
+        command_name: "motion"
+        std: 0.3
+        body_names: ["pelvis"]
+    feet_acc:
+      weight: -2.5e-6
+    undesired_contacts:
+      params:
+        sensor_cfg:
+          body_names:
+            - "^(?!left_ankle_roll_link$)(?!right_ankle_roll_link$)(?!left_wrist_roll_rubber_hand$)(?!right_wrist_roll_rubber_hand$)(?!left_elbow_link$)(?!right_elbow_link$).+$"
+    anti_shake_ang_vel:
+      params:
+        body_names: ["left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand"]
+    motion_5point_local_pos:   # = feet-only anchor-relative position tracking (walk4, slot reuse)
+      _target_: isaaclab.managers.RewardTermCfg
+      func: gear_sonic.envs.manager_env.mdp:tracking_relative_body_pos_error
+      weight: 1.0
+      params:
+        command_name: "motion"
+        std: 0.06
+        body_names: ["left_ankle_roll_link", "right_ankle_roll_link"]
+  observations:
+    tokenizer:   # the SMPL encoder's three terms on the GEM-X-like stream (same names / shapes as the vendor terms)
+      smpl_joints_multi_future_local_nonflat:
+        func: gear_sonic.envs.manager_env.mdp.smpl_gemx_aug:smpl_joints_multi_future_local_gemx
+        params:
+          aug: ${smpl_gemx_aug}
+      smpl_root_ori_b_multi_future:
+        func: gear_sonic.envs.manager_env.mdp.smpl_gemx_aug:smpl_root_ori_b_mf_gemx
+        params:
+          aug: ${smpl_gemx_aug}
+      joint_pos_multi_future_wrist_for_smpl:
+        func: gear_sonic.envs.manager_env.mdp.smpl_gemx_aug:joint_pos_multi_future_wrist_for_smpl_gemx
+        params:
+          joints_idx: [21, 22]  # Isaac Lab indices of left/right_wrist_roll_joint
+          aug: ${smpl_gemx_aug}
+  events:
+    randomize_rigid_body_mass:
+      params:
+        asset_cfg:
+          body_names: ".*_wrist_roll_rubber_hand|torso_link"
+  terminations:
+    anchor_pos_xy:
+      _target_: isaaclab.managers.TerminationTermCfg
+      func: gear_sonic.envs.manager_env.mdp:exceeded_anchor_pos_xy
+      params:
+        command_name: "motion"
+        threshold: 0.5
+    ee_body_pos:
+      params:
+        body_names:
+          - "left_ankle_roll_link"
+          - "right_ankle_roll_link"
+          - "left_wrist_roll_rubber_hand"
+          - "right_wrist_roll_rubber_hand"
+  config:
+    robot:
+      type: k1
+    terrain_type: trimesh
+  commands:
+    motion:
+      anchor_body: "pelvis"
+      vr_3point_body: ["left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand", "torso_link"]
+      vr_3point_body_offset: [[0.15, 0.0, 0.0], [0.15, 0.0, 0.0], [0.0, 0.0, 0.45]]
+      reward_point_body: ["torso_link", "left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand"]
+      reward_point_body_offset: [[0.0, 0.0, 0.5], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+      body_names: [
+        "pelvis",
+        "left_hip_roll_link",
+        "left_knee_link",
+        "left_ankle_roll_link",
+        "right_hip_roll_link",
+        "right_knee_link",
+        "right_ankle_roll_link",
+        "torso_link",
+        "left_shoulder_roll_link",
+        "left_elbow_link",
+        "left_wrist_roll_rubber_hand",
+        "right_shoulder_roll_link",
+        "right_elbow_link",
+        "right_wrist_roll_rubber_hand",
+      ]
+      num_future_frames: 4
+      dt_future_ref_frames: 0.02
+      smpl_num_future_frames: 4
+      smpl_dt_future_ref_frames: 0.02
+      cat_upper_body_poses: true
+      cat_upper_body_poses_prob: 0.5
+
+      freeze_frame_aug: true
+      teleop_sample_prob_when_smpl: 0.5
+
+      motion_lib_cfg:
+        adaptive_sampling:
+          adp_samp_failure_rate_max_over_mean: 200
+        motion_file: null
+        smpl_motion_file: dummy
+        smpl_y_up: true
+        asset:
+          assetFileName: "k1.xml"
+
+callbacks:
+  model_save:
+    save_frequency: 500
+
+algo:
+  config:
+    empty_cache_every_n_ppo_epoch: -1
+    num_steps_per_env: 24
+    use_clampped_std: true
+    std_clamp_min: 0.001
+    std_clamp_max: 0.5
+    max_grad_norm: 0.1
+    num_learning_iterations: 25000
+    actor:
+      backbone:
+        reencode_smpl_g1_recon: true
+        encoders:
+          g1:
+            inputs: ["command_multi_future_nonflat", "motion_anchor_ori_b_mf_nonflat"]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [512, 512, 256]
+          teleop:
+            inputs:
+              [
+                "command_multi_future_lower_body",
+                "vr_3point_local_target",
+                "vr_3point_local_orn_target",
+                "motion_anchor_ori_b",
+              ]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [512, 512, 256]
+          smpl:
+            inputs:
+              [
+                "smpl_joints_multi_future_local_nonflat",
+                "smpl_root_ori_b_multi_future",
+                "joint_pos_multi_future_wrist_for_smpl",
+              ]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [256, 256]
+        decoders:
+          g1_kin:
+            outputs: ["command_multi_future_nonflat", "motion_anchor_ori_b_mf_nonflat"]
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [512, 512, 256]
+          g1_dyn:
+            params:
+              module_config_dict:
+                layer_config:
+                  hidden_dims: [1024, 512, 512, 256]
+
+    critic:
+      backbone:
+        module_config_dict:
+          layer_config:
+            hidden_dims: [1024, 1024, 512, 256]
