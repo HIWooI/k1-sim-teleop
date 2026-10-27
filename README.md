@@ -7,7 +7,7 @@
 - **상체**: 사람 팔 → 뼈 방향 팔 IK → PD 팔 제어(서 있을 때)
 - **보행**: 사람의 걷기 의도 → 속도 명령 → NVIDIA GEAR-SONIC 키네마틱 플래너가 걸음 참조를 만들고, GEAR-SONIC 학습 코드로
   K1용으로 학습한 정책이 그 참조를 따라 걷는다 (built with NVIDIA GEAR-SONIC)
-- **행사 기본 백엔드 = hybrid**: 서 있을 때는 팔에 집중(ROBOTIS 보행 정책 다리 + PD 팔), 걷기 명령이 이어지면 K1 SONIC
+- **행사 기본 백엔드 = hybrid**: 서 있을 때는 팔에 집중(보행 정책 `loco_armdriven_r2` 다리 + PD 팔), 걷기 명령이 이어지면 K1 SONIC
   보행 정책으로 넘어가고, 멈추면 다시 돌아온다
 - **인식**: MediaPipe Pose(CPU, 어느 노트북에서나 기본 대체 경로) 또는 GEM-X(NVIDIA GPU, 전신 3D·깊이; 외부 폴더 필요)
 
@@ -73,7 +73,7 @@ release 정책 → MuJoCo G1).
 | 항목 | 위치 | 구하는 법 |
 |---|---|---|
 | K1 SONIC 보행 정책(행사 설정: walk4 7000) | `models/k1/k1s_walk4/deploy/k1s_walk4_007000/` | 직접 학습 — [docs/training.md](docs/training.md). 학습 데이터 라이선스 때문에 가중치는 배포하지 않는다 |
-| ROBOTIS K1 정책(`loco_armdriven_r2`, `student_asset`) | `k1/assets/*/exported/policy.onnx` | ROBOTIS에 문의. split·hybrid 백엔드에 필요 |
+| K1 정책(`loco_armdriven_r2`, `student_asset`) | `k1/assets/*/exported/policy.onnx` | 작성자가 cyclo_lab으로 학습한 정책이라 포함하지 않는다. split·hybrid 백엔드에 필요 |
 | K1 메시 | `sonic_k1/overlay/.../urdf/k1/meshes/` | `sonic_k1/scripts/stage_assets.py`가 ROBOTIS ai_sapiens에서 만든다 |
 | GEAR-SONIC ONNX·플래너, MediaPipe 모델 | `models/` | `scripts/setup.sh`, `fetch_planner()` (NVIDIA Open Model License / Apache-2.0) |
 | SMPL-X 기반 `human_joints_info.pkl` | `vendor/GR00T-WholeBodyControl/...` | `scripts/setup.sh`가 GR00T 저장소에서 받는다(SMPL-X 라이선스, 재배포 금지) |

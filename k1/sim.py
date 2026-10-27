@@ -10,7 +10,7 @@ Port of the author's earlier K1 sim2sim (`sim/sim2sim.py --split`), kept numeric
 * split drive: arms = mimic student (`student_asset`), legs + waist = `loco_armdriven_r2` (standing, velocity
   command 0). The mimic is told the lower body tracks its reference perfectly (it is OOD otherwise), anchor =
   reference torso orientation in the robot torso frame with the entry yaw alignment
-* the policies are driven through ROBOTIS' own ExpertAdapter (observation order, history, action decode)
+* the policies are driven through the ExpertAdapter they were exported with (observation order, history, action decode)
 
 Only presentation was added: a light event scene and an offscreen camera.
 """
@@ -148,7 +148,7 @@ def ort_session(path):
 
 
 def _load_adapter(asset):
-    """ROBOTIS ExpertAdapter loaded by path (as the original sim_policy._load_adapter does), single-threaded session."""
+    """ExpertAdapter loaded by path (as the original sim_policy._load_adapter does), single-threaded session."""
     src = ASSETS / "student_asset" / "expert_adapter.py"
     spec = importlib.util.spec_from_file_location("expert_adapter", str(src))
     mod = importlib.util.module_from_spec(spec)

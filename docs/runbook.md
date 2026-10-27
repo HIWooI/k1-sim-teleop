@@ -204,7 +204,7 @@ scripts/make_event_bundle.sh [OUT_DIR]      # 코드(HEAD) + git에 없는 모�
 cd OUT_DIR && bash scripts/install_event.sh # 행사 컴퓨터에서 한 번: .venv + 사전 점검(인터넷 한 번 필요)
 ```
 
-번들에는 ROBOTIS 정책 가중치, SMPL-X에서 유도한 `human_joints_info.pkl`, 직접 학습한 정책 가중치처럼 **재배포할 수 없는 파일**이 들어간다.
+번들에는 K1 정책 가중치(split·hybrid용), SMPL-X에서 유도한 `human_joints_info.pkl`, 직접 학습한 정책 가중치처럼 **재배포할 수 없는 파일**이 들어간다.
 행사 컴퓨터로 옮기는 용도로만 쓰고 공개 저장소나 공유 링크에 올리지 않는다. GEM-X 환경은 번들에 넣지 않는다.
 
 ## 12. 종료와 로그

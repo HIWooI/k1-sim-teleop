@@ -81,7 +81,7 @@ presenter의 앞뒤 축 값은 `sender_gemx --presenter-param KEY=VALUE`(반복 
 
 | 백엔드 | 다리 | 팔 | 비고 |
 |---|---|---|---|
-| `split` | ROBOTIS `loco_armdriven_r2`(속도 명령) | ROBOTIS mimic student(참조 추종) 또는 PD(`--arm-mode pd`) | `k1/sim.py`. 숙임 불가. loco 정책의 방향별 데드존 때문에 속도 제한기가 0이 아닌 명령을 시작 레벨로 바로 올린다 |
+| `split` | `loco_armdriven_r2`(속도 명령) | mimic student(참조 추종) 또는 PD(`--arm-mode pd`) | `k1/sim.py`. 숙임 불가. loco 정책의 방향별 데드존 때문에 속도 제한기가 0이 아닌 명령을 시작 레벨로 바로 올린다 |
 | `sonic` | K1 SONIC 전신 정책 + GEAR-SONIC 키네마틱 플래너 | 같은 정책(사람 팔을 참조에 덧입힘) | 숙임·허리 가능. 사람 팔 추종은 split보다 덜 정확 |
 | `sonic_human` | K1 SONIC SMPL 인코더(사람 전신 자세를 직접) | 같은 정책 | BONES-SEED 실험. 수락 기준 미달([training.md](training.md) §5) |
 | **`hybrid`** (행사 기본) | 서 있을 때 split, 걸을 때 K1 SONIC + 플래너 | 서 있을 때 PD 팔(사람), 걸을 때 플래너 팔 흔들기 | 아래 |

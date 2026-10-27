@@ -37,11 +37,17 @@
 <https://github.com/ROBOTIS-GIT/cyclo_lab>: `sonic_k1/overlay/gear_sonic/envs/manager_env/robots/k1.py`의 K1 액추에이터 상수(QC080·QC060
 토크·속도·armature)는 cyclo_lab `K1_rev1.py`의 값이다.
 
-### ROBOTIS K1 정책 배포 파일 — ROBOTIS 허락을 받아 포함
+### K1 정책 파일 — 작성자의 이전 프로젝트에서 작성·학습
 
-- `k1/assets/student_asset/expert_adapter.py`: Copyright 2026 ROBOTIS CO., LTD., Apache License 2.0(파일 머리말).
-- `k1/assets/student_asset/params/sim2real.yaml`, `k1/assets/loco_armdriven_r2/params/sim2real.yaml`: ROBOTIS K1 정책의 배포
-  파라미터. ROBOTIS의 허락을 받아 포함했다. 해당 정책 가중치(`exported/policy.onnx`)는 포함하지 않는다.
+ROBOTIS cyclo_lab 학습 환경을 써서 이 저장소 작성자가 이전 프로젝트에서 만든 파일이다.
+
+- `k1/assets/student_asset/expert_adapter.py`: 작성자가 작성했다(2026-08-13). 정책마다 다른 관절 순서·관측·action scale을 한
+  순서로 맞춘다. cyclo_lab 저장소 안에서 작성해 그 저장소의 머리말(Copyright 2026 ROBOTIS CO., LTD., Apache License 2.0)이 붙어 있다.
+- `k1/assets/loco_armdriven_r2/params/sim2real.yaml`: 작성자가 cyclo_lab으로 학습한 보행 정책(2026-08-21)을 export할 때 나온
+  배포 파라미터(관절 순서, PD 게인, 기본 자세).
+- `k1/assets/student_asset/params/sim2real.yaml`: 작성자가 학습한 mimic student 정책(2026-08-14)의 배포 파라미터. 같은 파일이
+  ROBOTIS cyclo_mjlab 공개 저장소(Apache-2.0)에도 있다.
+- 두 정책의 가중치(`exported/policy.onnx`)는 포함하지 않는다.
 
 ## 2. 설치·실행 때 받는 것 (재배포하지 않음)
 
