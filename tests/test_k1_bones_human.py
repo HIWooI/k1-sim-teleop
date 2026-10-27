@@ -30,6 +30,8 @@ SAMPLE = ROOT / "models" / "sample_data"
 MJCF = ROOT / "sonic_k1/overlay/gear_sonic/data/assets/robot_description/mjcf/k1.xml"
 HAVE_SAMPLE = (SAMPLE / "soma_filtered").exists() and (SAMPLE / "robot_filtered").exists()
 HAVE_K1 = MJCF.exists() and any((MJCF.parent / "../urdf/k1/meshes").glob("*.stl"))
+# sim_server offers sonic_human only next to the sonic checkpoint, which is trained locally (not in the Release)
+HAVE_SONIC = (ROOT / "models" / "k1" / "k1s_la4" / "deploy_002000").exists()
 
 
 def rand_quats(n, seed=0):
@@ -349,6 +351,7 @@ class TestSonicHumanBackend(unittest.TestCase):
     def test_layout_10_frames(self):
         self._run(10)
 
+    @unittest.skipUnless(HAVE_SONIC, "sonic checkpoint models/k1/k1s_la4/deploy_002000 missing")
     def test_available_backends_lists_it(self):
         make_dummy_variant(self.root / "v4", 4)
         env = dict(os.environ, K1LIVE_HUMAN_VARIANT=str(self.root / "v4"))

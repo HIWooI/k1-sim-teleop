@@ -49,6 +49,9 @@ K1Demo.command (사전 점검 → 서비스 → 브라우저 창 두 개)
 자세한 설치는 [docs/setup.md](docs/setup.md), 운영은 [docs/runbook.md](docs/runbook.md)에 있습니다.
 
 ```bash
+# 0) 받기 — 필요한 것: git, curl, Python 3.12 (macOS: brew install python@3.12, Ubuntu: sudo apt install python3.12-venv libgles2)
+git clone https://github.com/HIWooI/k1-sim-teleop && cd k1-sim-teleop
+
 # 1) 환경 + 공개 모델(GEAR-SONIC ONNX, 플래너, MediaPipe, GR00T 저장소 일부)
 scripts/setup.sh                                  # macOS 기준; Linux는 PYTHON=python3.12 scripts/setup.sh
 .venv/bin/python -c "from k1live.planner import fetch_planner; fetch_planner()"   # planner_sonic.onnx
@@ -65,6 +68,12 @@ scripts/fetch_weights.sh
 ./K1Demo.command                                  # macOS 더블클릭 / Ubuntu: bash K1Demo.command
 .venv/bin/python -m k1live.service --mock         # 모델 없이 패널·관객 화면만 확인
 ```
+
+`K1Demo.command`를 실행하면 사전 점검 표가 나온 뒤 브라우저 창 두 개(운영 패널 `http://127.0.0.1:8700/`, 관객 화면
+`http://localhost:8700/display`)가 열립니다. 카메라 앞 2.5–3.5 m에 서서 `C`(보정) → `Space`(시작)를 누르면 로봇이 따라 하고, 앞으로
+한 걸음 나오면 걷습니다. `Esc`는 비상정지, 터미널 창을 닫으면 종료됩니다. macOS는 처음에 터미널의 카메라 권한을 허용해야 합니다.
+웹캠 대신 영상 파일로 해 보려면 `K1DEMO_ARGS="--source <영상>" ./K1Demo.command`. 키·문제 해결은
+[docs/runbook.md](docs/runbook.md)의 '한 장 요약'에 있습니다.
 
 가중치 없이 바로 돌려 볼 수 있는 것은 G1(Unitree) GEAR-SONIC Mac 포트입니다: `./run_webcam.sh`(웹캠 → MediaPipe → SMPL → GEAR-SONIC
 release 정책 → MuJoCo G1).

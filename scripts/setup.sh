@@ -17,7 +17,12 @@ PY=${PYTHON:-/opt/homebrew/bin/python3.12}
 
 mkdir -p vendor models videos logs
 if [[ ! -d vendor/GR00T-WholeBodyControl ]]; then
-  GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/NVlabs/GR00T-WholeBodyControl.git vendor/GR00T-WholeBodyControl
+  # LFS files are fetched one by one below, so the clone skips LFS entirely - also where a git-lfs filter is configured
+  # but git-lfs is not installed. Clone into a temp dir so a failed clone is retried on the next run.
+  rm -rf vendor/.GR00T-WholeBodyControl.tmp
+  GIT_LFS_SKIP_SMUDGE=1 git -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false \
+    clone --depth 1 https://github.com/NVlabs/GR00T-WholeBodyControl.git vendor/.GR00T-WholeBodyControl.tmp
+  mv vendor/.GR00T-WholeBodyControl.tmp vendor/GR00T-WholeBodyControl
 fi
 REPO=vendor/GR00T-WholeBodyControl
 MEDIA=https://media.githubusercontent.com/media/NVlabs/GR00T-WholeBodyControl/main

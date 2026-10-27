@@ -5,7 +5,7 @@
 | 항목 | 권장 |
 |---|---|
 | OS | macOS(Apple Silicon) 또는 Ubuntu 22.04/24.04 x86_64 |
-| Python | 3.12 (`requirements.txt`의 버전으로 확인함) |
+| Python | 3.12 (`requirements.txt`의 버전으로 확인함). Ubuntu는 `sudo apt install python3.12-venv libgles2`(MediaPipe가 `libGLESv2.so.2`를 연다. 데스크톱 Ubuntu에는 보통 이미 있다) |
 | CPU·메모리 | 8코어 이상, RAM 16 GB 이상. 데모는 CPU 약 1.5–2.5코어, 메모리 약 2–2.5 GB(split) / 약 4.5 GB(hybrid)를 쓴다 |
 | GPU | 필요 없음(MediaPipe 경로). GEM-X 인식을 쓰려면 NVIDIA GPU(VRAM 8 GB 이상, 실측 사용량 6.2 GB) |
 | 카메라 | USB 웹캠 1080p 30 fps, 화각 65–78°. 영상 파일을 카메라처럼 쓸 수도 있다(`--source <파일>`) |

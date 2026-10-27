@@ -179,6 +179,25 @@ def check_onnx():
     return PASS, "추론 1회: " + ", ".join(out)
 
 
+def check_mediapipe():
+    """The sender's recognizer (and the GEM-X fallback): MediaPipe opens its C library only when the landmarker is
+    created, so a missing system library (Linux: libGLESv2.so.2 from libgles2) passes the package import check."""
+    import numpy as np
+    if not (REPO / "models" / "pose_landmarker_full.task").is_file():
+        return FAIL, "scripts/setup.sh 필요 · models/pose_landmarker_full.task 없음"
+    t0 = time.perf_counter()
+    try:
+        from sonic.pose_mp import PoseTracker
+        tr = PoseTracker("full")
+    except OSError as e:
+        return FAIL, ("Ubuntu: sudo apt install libgles2 · " if "GLES" in str(e) else "") + f"MediaPipe 라이브러리를 열 수 없음: {e}"
+    try:
+        tr.process(np.zeros((360, 640, 3), np.uint8), 0.0)
+    finally:
+        tr.close()
+    return PASS, f"포즈 모델 로드·추론 1회 {(time.perf_counter() - t0) * 1e3:.0f} ms"
+
+
 def check_render():
     import mujoco
     from k1 import sim as k1sim
@@ -399,7 +418,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="K1 live demo pre-event checks")
     ap.add_argument("--no-camera", action="store_true", help="skip opening the camera")
     ap.add_argument("--camera", type=int, default=None, help="camera index (default: the one the service uses)")
-    ap.add_argument("--quick", action="store_true", help="skip the ONNX and render checks")
+    ap.add_argument("--quick", action="store_true", help="skip the ONNX, MediaPipe and render checks")
     ap.add_argument("--mock", action="store_true", help="sender/sim_server may be missing (mock rehearsal)")
     ap.add_argument("--gemx-full", action="store_true", help="GEM-X: load and warm up the models (20-60 s)")
     ap.add_argument("--json", action="store_true")
@@ -418,9 +437,11 @@ def main(argv=None):
         rep.run("GEM-X 인식", lambda: check_gemx(args.gemx_full))
     if args.quick:
         rep.add("ONNX 정책", SKIP, "--quick")
+        rep.add("MediaPipe", SKIP, "--quick")
         rep.add("MuJoCo 렌더", SKIP, "--quick")
     else:
         rep.run("ONNX 정책", check_onnx)
+        rep.run("MediaPipe", check_mediapipe)
         rep.run("MuJoCo 렌더", check_render)
     rep.run("포트", check_ports)
     rep.run("디스크", check_disk)

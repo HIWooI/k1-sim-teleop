@@ -13,3 +13,5 @@ imageio-ffmpeg==0.6.0
 joblib==1.6.0
 # only for reading .pt / human_joints_info.pkl (GEM-X hpe_results.pt, SMPL rest skeleton cache)
 torch==2.14.1
+# tests (README: .venv/bin/python -m pytest -q tests sonic_k1/tests)
+pytest==9.1.1
