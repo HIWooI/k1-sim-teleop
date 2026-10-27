@@ -257,6 +257,16 @@ def gemx_args(cfg):
     return out + [str(x) for x in (g.get("args") or [])]
 
 
+def gemx_env_missing(cfg):
+    """'' when the GEM-X sender is worth starting, else why not: its own cheap check (GEM-X python and perception
+    folder on disk). Without them (a fresh clone) it would only start, exit 5 and hand over to MediaPipe."""
+    if cfg["sender_gemx_cmd"] != DEFAULTS["sender_gemx_cmd"]:
+        return ""
+    from k1live.sender_gemx import parse_args, preflight
+
+    return preflight(parse_args(gemx_args(cfg)))
+
+
 def build_argv(template, cfg, session=""):
     src = cfg["source"]
     arm = arm_settings(cfg)
@@ -1015,7 +1025,9 @@ class Service:
                           "sim": list(sim_t) + mock_sim_args.split()}
         self.relays = {"cam": MjpegRelay("cam", P.CAM_HTTP_PORT, "/cam.mjpg"),
                        "robot": MjpegRelay("robot", P.ROBOT_HTTP_PORT, "/robot.mjpg")}
-        first = {"sender": "sender_gemx" if cfg.get("perception") == "gemx" else "sender", "sim": "sim"}
+        gemx_missing = gemx_env_missing(cfg) if cfg.get("perception") == "gemx" and not mock else ""
+        first = {"sender": "sender_gemx" if cfg.get("perception") == "gemx" and not gemx_missing else "sender",
+                 "sim": "sim"}
         specs = [ProcSpec(name, build_argv(self.templates[first[name]], cfg, self.dir), self.dir / f"{log}.log",
                           cwd=str(REPO),
                           env=child_env(cfg), grace_s=float(cfg["grace_s"]), stale_s=float(cfg["stale_s"]))
@@ -1026,6 +1038,8 @@ class Service:
                               frame_age=lambda n: self.relays[n].age(),
                               proc_up=lambda n: self.sup.procs[n].state == "running")
         self.sup = Supervisor(specs, on_event=self._proc_event)
+        if gemx_missing:
+            self.ctl.on_gemx_unavailable(gemx_missing)   # starts on MediaPipe; choosing GEM-X in the panel retries it
         self.bus = Bus(self.ctl, beat=self.sup.beat)
         self.start_procs = start_procs
         self._mem_restart_t = {}

@@ -432,6 +432,35 @@ def test_service_falls_back_when_sender_exits_5(tmp_path, monkeypatch):
         svc.shutdown()
 
 
+def test_service_starts_on_mediapipe_without_gemx_env(tmp_path, monkeypatch):
+    """perception gemx with no GEM-X folder at all (a fresh clone): the real GEM-X sender is not started just to exit 5;
+    the service starts on MediaPipe with the reason, and the operator's choice stays gemx."""
+    from k1live import service as S
+
+    for k in ("CTRL_PORT", "SIM_STATE_PORT", "SENDER_STATE_PORT", "CAM_HTTP_PORT", "ROBOT_HTTP_PORT"):
+        monkeypatch.setattr(P, k, free_port())
+    monkeypatch.setattr(S, "SETTINGS_PATH", tmp_path / "settings.json")
+    monkeypatch.setattr(S, "LOG_ROOT", tmp_path)
+    cfg = S.load_config(path=tmp_path / "none.yaml")
+    cfg["perception"] = "gemx"
+    cfg["gemx"] = {**cfg["gemx"], "perception_dir": str(tmp_path / "no_gemx")}
+    cfg["sender_cmd"] = [sys.executable, "-c", "import time; print('mediapipe sender'); time.sleep(30)"]
+    cfg["sim_cmd"] = [sys.executable, "-c", "import time; time.sleep(30)"]
+    svc = S.Service(cfg, tmp_path / "sess", port=free_port())
+    assert svc.ctl.perc_active == "mediapipe" and "not found" in svc.ctl.perc_note
+    assert svc.ctl.counters["gemx_fallbacks"] == 1 and svc.ctl.d["perception"] == "gemx"
+    svc.start()
+    try:
+        end = time.time() + 15
+        while time.time() < end and "mediapipe sender" not in (svc.dir / "sender.log").read_text():
+            time.sleep(0.1)
+        log = (svc.dir / "sender.log").read_text()
+        assert "mediapipe sender" in log and "k1live.sender_gemx" not in log
+        assert svc.sup.procs["sender"].restarts == 0
+    finally:
+        svc.shutdown()
+
+
 def test_preflight_gemx_check_uses_the_service_command(tmp_path, monkeypatch):
     from k1live import preflight
     from k1live import service as S
