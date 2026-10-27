@@ -57,7 +57,8 @@ scripts/setup.sh                                  # macOS 기준; Linux는 PYTHO
 git clone https://github.com/ROBOTIS-GIT/ai_sapiens third_party/ai_sapiens
 .venv/bin/python sonic_k1/scripts/stage_assets.py
 
-# 3) 정책 가중치 (저장소에 없음 — 아래 '포함하지 않은 것')
+# 3) K1 정책 가중치 (GitHub Release weights-v1, docs/weights.md)
+scripts/fetch_weights.sh
 
 # 4) 실행
 .venv/bin/python -m k1live.preflight --no-camera  # 사전 점검
@@ -72,8 +73,8 @@ release 정책 → MuJoCo G1).
 
 | 항목 | 위치 | 구하는 법 |
 |---|---|---|
-| K1 SONIC 보행 정책(행사 설정: walk4 7000) | `models/k1/k1s_walk4/deploy/k1s_walk4_007000/` | 직접 학습 — [docs/training.md](docs/training.md). 학습 데이터 라이선스 때문에 가중치는 배포하지 않는다 |
-| K1 정책(`loco_armdriven_r2`, `student_asset`) | `k1/assets/*/exported/policy.onnx` | 작성자가 cyclo_lab으로 학습한 정책이라 포함하지 않는다. split·hybrid 백엔드에 필요 |
+| K1 SONIC 보행 정책(행사 설정: walk4 7000) | `models/k1/k1s_walk4/deploy/k1s_walk4_007000/` | Release `weights-v1` — `scripts/fetch_weights.sh` ([docs/weights.md](docs/weights.md)). 직접 학습은 [docs/training.md](docs/training.md) |
+| K1 정책(`loco_armdriven_r2`, `student_asset`) | `k1/assets/*/exported/policy.onnx` | 같은 Release·스크립트. split·hybrid 백엔드에 필요 |
 | K1 메시 | `sonic_k1/overlay/.../urdf/k1/meshes/` | `sonic_k1/scripts/stage_assets.py`가 ROBOTIS ai_sapiens에서 만든다 |
 | GEAR-SONIC ONNX·플래너, MediaPipe 모델 | `models/` | `scripts/setup.sh`, `fetch_planner()` (NVIDIA Open Model License / Apache-2.0) |
 | SMPL-X 기반 `human_joints_info.pkl` | `vendor/GR00T-WholeBodyControl/...` | `scripts/setup.sh`가 GR00T 저장소에서 받는다(SMPL-X 라이선스, 재배포 금지) |
@@ -102,6 +103,7 @@ release 정책 → MuJoCo G1).
 | [docs/setup.md](docs/setup.md) | 설치, 모델·자산 준비, 환경 변수 |
 | [docs/runbook.md](docs/runbook.md) | 운영 매뉴얼: 실행, 패널, 설정 파일, 문제 해결, 운영 시험 도구 |
 | [docs/training.md](docs/training.md) | GEAR-SONIC 방식 K1 학습: overlay, 데이터, 보행 학습, BONES 실험 |
+| [docs/weights.md](docs/weights.md) | K1 정책 가중치(Release): 받기, 내용, 학습 데이터, 라이선스 |
 | [docs/results.md](docs/results.md) | 평가 방법과 결과 |
 | [docs/linux_official.md](docs/linux_official.md) | 공식 GEAR-SONIC 스택(Linux, C++/TensorRT) 래퍼 |
 | [docs/g1_to_k1_mapping.md](docs/g1_to_k1_mapping.md) | G1(29 DOF) → K1(23 DOF) 관절 매핑 |

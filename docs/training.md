@@ -4,7 +4,7 @@ NVIDIA GEAR-SONIC(GR00T-WholeBodyControl의 `gear_sonic`)의 학습 코드를 �
 학습했다. 목표는 GEAR-SONIC 규모(수만 GPU시간, 수백 시간 모캡)의 재현이 아니라, **같은 학습 방식으로 K1이 서고 제스처를 하고 플래너 걸음을
 따라 걷는 정책**을 얻는 것이었다. 결과로 나온 보행 정책(walk4 7000)이 행사 설정 hybrid 백엔드의 걷기를 맡는다.
 
-학습된 가중치는 저장소에 없다(학습 데이터 조건 — §6).
+행사 설정 walk4 7000은 GitHub Release로 배포한다([weights.md](weights.md)). 다른 run의 가중치는 배포하지 않는다(학습 데이터 조건 — §6).
 
 ## 1. K1 embodiment (`sonic_k1/`)
 
@@ -127,4 +127,5 @@ hybrid는 "서 있을 때 팔, 걸을 때 플래너 걸음"을 나눠 맡긴다.
 - 보행 데이터: GEAR-SONIC 플래너 출력(NVIDIA Open Model License), GR00T 예제 모션, ROBOTIS cyclo_lab 댄스(Apache-2.0), 제3자 댄스 영상에서 리타깃한
   클립 2개, 직접 만든 제스처·합성 동작.
 
-그래서 이 저장소는 학습된 가중치를 배포하지 않는다. 직접 학습한 가중치를 배포하려면 위 조건을 확인한다([THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)).
+walk4 7000은 BONES-SEED와 SMPL-X 파일 없이 학습했고, 위 보행 데이터만으로 학습해 Release로 배포한다([weights.md](weights.md)). BONES로 학습한
+`k1s_bones*` 가중치는 배포하지 않는다. 직접 학습한 가중치를 배포하려면 위 조건을 확인한다([THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)).

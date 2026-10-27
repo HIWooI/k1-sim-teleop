@@ -5,7 +5,7 @@
 #   scripts/make_event_bundle.sh [OUT_DIR]        default dist/k1_event_bundle_<date>
 # GEM-X (NVIDIA GPU only) is not bundled — its environment is installed separately (docs/setup.md).
 # A bundle is for your own event machine only: it carries files that must not be redistributed (the SMPL-X derived
-# human_joints_info, ROBOTIS K1 policies, trained checkpoints) - never publish or share a bundle.
+# human_joints_info, event videos) - never publish or share a bundle.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 OUT=${1:-dist/k1_event_bundle_$(date +%Y%m%d)}

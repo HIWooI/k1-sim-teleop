@@ -127,9 +127,10 @@ def check_models(mock=False):
         (have if xml_ok else miss).append("K1 MJCF·메시" + ("" if xml_ok else f" ({k1sim.K1_XML})"))
     except Exception as e:
         miss.append(f"k1.sim ({e})")
+    hint = "K1 정책은 scripts/fetch_weights.sh · " if any(not (REPO / p).is_file() for p in POLICIES) else ""
     if miss and not mock:
-        return FAIL, "없음: " + ", ".join(miss)
-    return (WARN if miss else PASS), "있음: " + ", ".join(have) + (f" · 없음: {', '.join(miss)}" if miss else "")
+        return FAIL, hint + "없음: " + ", ".join(miss)
+    return (WARN if miss else PASS), hint + "있음: " + ", ".join(have) + (f" · 없음: {', '.join(miss)}" if miss else "")
 
 
 def check_sonic():
@@ -148,8 +149,8 @@ def check_hybrid():
     if hybrid_available_locally():
         v = os.environ.get("K1LIVE_HYBRID_VARIANT", "models/k1/k1s_walk3/deploy/k1s_walk3_005000")
         return PASS, f"hybrid 백엔드 사용 가능 (행사 기본) · SONIC 보행 {Path(v).name} · 플래너 · 스테이징 메시"
-    return WARN, ("hybrid 비활성 → split으로 시작: SONIC 보행 체크포인트(models/k1/k1s_walk3/deploy/k1s_walk3_005000 또는 "
-                  "K1LIVE_HYBRID_VARIANT), models/planner/planner_sonic.onnx, 스테이징 K1 메시 중 없음")
+    return WARN, ("hybrid 비활성 → split으로 시작(scripts/fetch_weights.sh): SONIC 보행 체크포인트(models/k1/k1s_walk3/deploy/"
+                  "k1s_walk3_005000 또는 K1LIVE_HYBRID_VARIANT), models/planner/planner_sonic.onnx, 스테이징 K1 메시 중 없음")
 
 
 def check_onnx():
@@ -159,7 +160,7 @@ def check_onnx():
     for p in POLICIES:
         f = REPO / p
         if not f.is_file():
-            return FAIL, f"{p} 없음"
+            return FAIL, f"scripts/fetch_weights.sh 필요 · {p} 없음"
         so = ort.SessionOptions()
         so.intra_op_num_threads = 1
         sess = ort.InferenceSession(str(f), so, providers=["CPUExecutionProvider"])

@@ -47,7 +47,7 @@ ROBOTIS cyclo_lab 학습 환경을 써서 이 저장소 작성자가 이전 프�
   배포 파라미터(관절 순서, PD 게인, 기본 자세).
 - `k1/assets/student_asset/params/sim2real.yaml`: 작성자가 학습한 mimic student 정책(2026-08-14)의 배포 파라미터. 같은 파일이
   ROBOTIS cyclo_mjlab 공개 저장소(Apache-2.0)에도 있다.
-- 두 정책의 가중치(`exported/policy.onnx`)는 포함하지 않는다.
+- 두 정책의 가중치(`exported/policy.onnx`)는 git에 넣지 않고 GitHub Release `weights-v1`로 배포한다([docs/weights.md](docs/weights.md)).
 
 ## 2. 설치·실행 때 받는 것 (재배포하지 않음)
 
@@ -70,13 +70,15 @@ ROBOTIS cyclo_lab 학습 환경을 써서 이 저장소 작성자가 이전 프�
 
 ## 3. 학습 데이터 (가중치를 공개할 때)
 
-이 저장소는 학습된 정책 가중치를 포함하지 않는다. 직접 학습한 가중치를 배포할 때는 학습에 쓴 데이터의 조건을 따른다.
+git에는 학습된 정책 가중치를 넣지 않는다. 행사 설정 가중치(K1 SONIC walk4 7000과 위 두 K1 정책)는 GitHub Release `weights-v1`로
+배포하고, 학습 데이터는 [docs/weights.md](docs/weights.md)에 적었다. 직접 학습한 가중치를 배포할 때는 학습에 쓴 데이터의 조건을 따른다.
 
 - **BONES-SEED**(사람 전신 실험 `k1s_bones*`, 선택): <https://bones.studio/info/seed-license>. 원 데이터 재배포 금지, 비상업 조건 등.
   이 데이터로 학습한 모델에는 다음 문구를 붙인다: "Training data includes Motion Data by Bones Studio (https://bones.studio)."
 - **SMPL-X 유도 파일**(`human_joints_info.pkl`, SMPL 인코더 입력): SMPL-X 모델 라이선스를 따른다.
 - 보행 정책 데이터(`sonic_k1_train/data/`로 생성): GEAR-SONIC 플래너 출력(NVIDIA Open Model License), GR00T 예제 모션, ROBOTIS cyclo_lab
-  댄스(Apache-2.0), 직접 만든 제스처·합성 동작. 각 출처의 조건을 확인한다.
+  댄스(Apache-2.0), 직접 만든 제스처·합성 동작, 제3자 군무 영상("Guap")을 GEM-X로 리타깃한 12초 클립과 그 미러(영상·모션은
+  배포하지 않음). 각 출처의 조건을 확인한다.
 
 ## 4. 평가에 쓴 영상
 

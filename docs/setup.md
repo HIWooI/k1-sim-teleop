@@ -46,15 +46,17 @@ git clone https://github.com/ROBOTIS-GIT/ai_sapiens third_party/ai_sapiens      
 - `stage_assets.py`는 `sonic_k1/overlay/gear_sonic/data/assets/robot_description/`에 `urdf/k1/k1.urdf`, `urdf/k1/meshes/*.stl`(git 제외),
   `mjcf/k1.xml`을 쓴다. hybrid 백엔드와 학습 둘 다 이 스테이징 결과를 쓴다.
 
-## 4. 정책 가중치 (저장소에 없음)
+## 4. 정책 가중치 (GitHub Release)
+
+`scripts/fetch_weights.sh`가 아래 표의 처음 세 줄을 Release `weights-v1`에서 받아 제자리에 둔다([weights.md](weights.md)). 나머지는 직접 학습한다.
 
 | 경로 | 쓰는 곳 | 구하는 법 |
 |---|---|---|
-| `k1/assets/loco_armdriven_r2/exported/policy.onnx` | split·hybrid의 다리(보행 정책) | 포함하지 않음(작성자가 cyclo_lab으로 학습) |
-| `k1/assets/student_asset/exported/policy.onnx` | split의 팔(mimic student), hybrid의 그림자 실행 | 포함하지 않음(작성자가 cyclo_lab으로 학습) |
-| `models/k1/k1s_walk4/deploy/k1s_walk4_007000/` (`model_encoder.onnx`, `model_decoder.onnx`, `observation_config.yaml`) | hybrid가 걸을 때(행사 설정) | [training.md](training.md)대로 학습·export. 다른 폴더면 `event.yaml`의 `hybrid_variant` 또는 `K1LIVE_HYBRID_VARIANT` |
-| `models/k1/k1s_la4/deploy_002000/` | `sonic` 백엔드(선택) | 같은 방법 |
-| `K1LIVE_HUMAN_VARIANT` 폴더 | `sonic_human` 백엔드(선택, 실험) | 같은 방법(SMPL 인코더 포함 run) |
+| `k1/assets/loco_armdriven_r2/exported/policy.onnx` | split·hybrid의 다리(보행 정책) | `scripts/fetch_weights.sh` |
+| `k1/assets/student_asset/exported/policy.onnx` | split의 팔(mimic student), hybrid의 그림자 실행 | `scripts/fetch_weights.sh` |
+| `models/k1/k1s_walk4/deploy/k1s_walk4_007000/` (`model_encoder.onnx`, `model_decoder.onnx`, `observation_config.yaml`) | hybrid가 걸을 때(행사 설정) | `scripts/fetch_weights.sh`(직접 학습은 [training.md](training.md)). 다른 폴더면 `event.yaml`의 `hybrid_variant` 또는 `K1LIVE_HYBRID_VARIANT` |
+| `models/k1/k1s_la4/deploy_002000/` | `sonic` 백엔드(선택) | 배포하지 않음. [training.md](training.md)대로 학습·export |
+| `K1LIVE_HUMAN_VARIANT` 폴더 | `sonic_human` 백엔드(선택, 실험) | 배포하지 않음. 같은 방법(SMPL 인코더 포함 run) |
 
 없을 때의 동작: 사전 점검이 '실패'(K1 정책) 또는 '경고'(hybrid·sonic)를 보이고, hybrid 파일이 없으면 서비스가 split으로 시작한다. 모델 없이
 화면·패널만 보려면 `python -m k1live.service --mock`.

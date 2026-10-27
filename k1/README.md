@@ -13,7 +13,7 @@ K1(23 DOF)을 MuJoCo 물리(200 Hz, 제어 50 Hz)와 onnxruntime CPU로 돌리�
 | `assets/k1_config.yaml` | ROBOTIS ai_sapiens `ai_sapiens_sim2real/config/k1_config.yaml` (Apache-2.0) | `robot_joint_order`만 |
 | `assets/student_asset/expert_adapter.py` | 작성자의 이전 프로젝트(cyclo_lab 안에서 작성해 ROBOTIS Apache-2.0 머리말이 붙음) | 정책마다 다른 관절 순서·관측·action scale을 한 순서로 맞춘다 |
 | `assets/*/params/sim2real.yaml` | 작성자가 cyclo_lab으로 학습한 K1 정책의 배포 파라미터 | export 때 생성된 파일 |
-| `assets/*/exported/policy.onnx` | 작성자가 학습한 K1 정책(`student_asset` = mimic student, `loco_armdriven_r2` = 보행) | **포함하지 않음**. `.gitignore` 대상 |
+| `assets/*/exported/policy.onnx` | 작성자가 학습한 K1 정책(`student_asset` = mimic student, `loco_armdriven_r2` = 보행) | git에는 없음(`.gitignore`). Release `weights-v1`에서 `scripts/fetch_weights.sh`로 받는다 |
 | (참조만) K1 MJCF·메시 | `$AI_SAPIENS_ROOT/ai_sapiens_description/mujoco/k1/k1.xml`, `meshes/k1_rev1` | 기본 `third_party/ai_sapiens` |
 
 ## 구동 방식
