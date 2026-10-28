@@ -18,5 +18,11 @@ async function flush(){for(let i=0;i<12;i++)await Promise.resolve();}
  assert.equal(cam.src,'old-cam');assert.equal(rafs.length,1);
  rafs[0]();await flush();assert.equal(cam.src,'blob:cam');assert.equal(robot.src,'blob:robot');
  c.stopStreams();assert.equal(cam.src,'');assert.equal(robot.src,'');assert.equal(revoked.length,2);
- console.log('PASS: one in-flight pair, both images decoded before atomic paint, stop revokes URLs');
+ c.startStreams();timers.at(-1).fn();assert.equal(fetches.length,4);
+ fetches[2].resolve({ok:false});await flush();
+ fetches[3].resolve({ok:true,blob:async()=> 'late-robot'});await flush();decodes[2]();await flush();
+ assert.equal(cam.src,'');assert.equal(robot.src,'');
+ assert.ok(revoked.includes('blob:late-robot'),'failed pairs clean up even a late successful image');
+ c.stopStreams();
+ console.log('PASS: one in-flight pair, atomic paint, stop and failed-pair URL cleanup');
 })().catch(e=>{console.error(e);process.exitCode=1});
