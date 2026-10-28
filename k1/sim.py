@@ -110,7 +110,7 @@ def yaw_mat(R):
     return np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
 
 
-def build_model(joint_names):
+def build_model(joint_names, render_scene=None):
     """Vendor k1.xml with absolute meshdir, its own motors/force ranges replaced by ours, + event scene."""
     xml = K1_XML.read_text()
     xml = xml.replace('meshdir="../../meshes/k1_rev1"', f'meshdir="{MESHDIR}"')
@@ -123,7 +123,14 @@ def build_model(joint_names):
     xml = re.sub(r"<visual>.*?</visual>", PRESENTATION, xml, count=1, flags=re.S)
     motors = "\n".join(f'    <motor name="{n}" joint="{n}" ctrlrange="-500 500"/>' for n in joint_names)
     xml = xml.replace("</mujoco>", SCENE.format(motors=motors) + "</mujoco>")
+    if render_scene == "snu":
+        # Only the renderer requests this preset. Controller physics keeps the original scene.
+        from k1live.scenery import snu_scene_xml
+        xml = snu_scene_xml(xml)
     model = mujoco.MjModel.from_xml_string(xml)
+    if render_scene == "snu":
+        from k1live.scenery import color_snu_sky
+        color_snu_sky(model)
     # presentation only: the vendor "white" is a flat grey; a slightly brighter, softly specular white reads
     # better on a projector. Mass/inertia/collision are untouched.
     white = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_MATERIAL, "white")

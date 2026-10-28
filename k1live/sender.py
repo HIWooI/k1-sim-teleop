@@ -280,6 +280,10 @@ def parse_args(argv=None):
     ap.add_argument("--no-mirror", action="store_true", help="robot copies the person's own left/right")
     ap.add_argument("--model", default="full", choices=["lite", "full", "heavy"], help="MediaPipe Pose model")
     ap.add_argument("--ik-smoothing", type=float, default=0.6, help="IK EMA weight of the new solution (1 = none)")
+    ap.add_argument("--arm-filter-cutoff", type=float, default=1.5,
+                    help="dir IK One-Euro minimum cutoff in Hz (higher = less smoothing / less lag)")
+    ap.add_argument("--arm-filter-beta", type=float, default=1.0,
+                    help="dir IK One-Euro response to motion speed")
     ap.add_argument("--arm-ik", default=os.environ.get("K1LIVE_ARM_IK", "shape18"), choices=["shape18", "dir"],
                     help="arm IK: shape18 = position IK, or dir = bone directions with frontal-plane angles from the image "
                     "(k1live/arm_ik.py, docs/architecture.md). Default $K1LIVE_ARM_IK or shape18")
@@ -302,6 +306,8 @@ def parse_args(argv=None):
     ap.add_argument("--exit-on-fail", action="store_true", help="exit 3 if the source cannot be opened in 5 s")
     ap.add_argument("--log", default="", help="write one JSON line per frame (timing) to this file")
     a = ap.parse_args(argv)
+    if not (0 < a.arm_filter_cutoff <= 120 and 0 <= a.arm_filter_beta <= 20):
+        ap.error("arm filter requires 0 < cutoff <= 120 and 0 <= beta <= 20")
     if a.camera is not None:
         a.source = str(a.camera)
     elif a.video:
@@ -428,7 +434,8 @@ def main(argv=None):
     gate = JumpGate()
     mapper = HumanMapper(mirror=not args.no_mirror, ik_smoothing=args.ik_smoothing, loco=not args.no_loco,
                          auto_calibrate=not args.no_auto_calibrate, loco_profile=args.loco_profile,
-                         smpl=not args.no_smpl, arm_ik=args.arm_ik)
+                         smpl=not args.no_smpl, arm_ik=args.arm_ik,
+                         arm_filter=(args.arm_filter_cutoff, args.arm_filter_beta))
     source = None
     if spec:
         source = FrameSource(spec, loop=args.loop)

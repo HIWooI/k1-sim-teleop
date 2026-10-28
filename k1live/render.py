@@ -135,7 +135,8 @@ def _render_main(model_fn, nq, buf, seq, lock, stop_ev, ready, port, size, fps, 
     model.vis.global_.offheight = max(model.vis.global_.offheight, H)
     renderer = mujoco.Renderer(model, height=H, width=W)
     opt = mujoco.MjvOption()
-    cam = FollowCam()
+    cam = (FollowCam(azimuth=180.0, distance=3.4, elevation=0.0, lookat_z=1.05)
+           if os.environ.get("K1LIVE_RENDER_SCENE") == "snu" else FollowCam())
     st = {"fps": 0.0, "render_ms": 0.0, "clients": 0, "frames": 0, "jpeg": None, "seq": 0}
     cond = threading.Condition()
     want = threading.Event()  # set while someone needs frames
@@ -231,7 +232,13 @@ def _render_main(model_fn, nq, buf, seq, lock, stop_ev, ready, port, size, fps, 
                 data.qpos[:] = q
                 mujoco.mj_forward(model, data)
                 last_seq = s
-            renderer.update_scene(data, camera=cam.update(q, time.monotonic()), scene_option=opt)
+            camera = cam.update(q, time.monotonic())
+            if os.environ.get("K1LIVE_RENDER_SCENE") == "snu":
+                # The distant set piece follows the presentation origin. Small stance drift must not
+                # eventually bring the gate into the foreground; controller physics is a separate model.
+                gate = model.geom("snu_gate_visual").id
+                data.geom_xpos[gate, :2] = cam.p + np.array([-13.0, 0.0])
+            renderer.update_scene(data, camera=camera, scene_option=opt)
             rgb = renderer.render()
             ok, jpg = cv2.imencode(".jpg", rgb[:, :, ::-1], [cv2.IMWRITE_JPEG_QUALITY, quality])
             dt_ms = (time.perf_counter() - t0) * 1e3

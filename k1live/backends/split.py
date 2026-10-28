@@ -24,6 +24,7 @@ Wraps k1.sim.K1Split (port of the original sim2sim --split, numerically unchange
 """
 from __future__ import annotations
 
+import os
 from typing import Optional, Sequence
 
 import numpy as np
@@ -38,7 +39,7 @@ ARM_MODES = ("student", "pd")
 
 def build_render_model():
     """Same MjModel as the physics (k1.sim scene), for a render process."""
-    return build_model(POLICY_JOINTS)
+    return build_model(POLICY_JOINTS, render_scene=os.environ.get("K1LIVE_RENDER_SCENE"))
 
 
 def _yaw_quat_xyzw(R):
