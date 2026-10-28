@@ -6,38 +6,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>K1 관객 화면</title>
 <link rel="icon" href="/static/favicon.svg">
-<link rel="stylesheet" href="/static/display.css">
+<link rel="stylesheet" href="/static/display.css?v=dual-stage-1">
 </head>
 <body>
 <div id="stage">
-  <header>
-    <div class="brand">
-      <span id="title">K1 텔레옵</span>
-      <span id="subtitle"></span>
-    </div>
-    <div class="live" id="live"><i></i>LIVE</div>
+ <div class="audience-shell">
+  <header class="brand-header" aria-label="서울대학교 SHAPE">
+    <div class="brand-wordmark">SHAPE<span class="brand-accent" aria-hidden="true"></span></div>
+    <span class="brand-school">SEOUL NATIONAL UNIVERSITY</span>
   </header>
-
-  <main id="live-view">
-    <section class="pane cam">
-      <img id="cam" alt="">
-      <span class="chip" id="label-cam">카메라</span>
-      <div class="msg" id="msg"></div>
+  <main id="live-view" aria-label="사람과 K1의 움직임 비교">
+    <section class="pane cam" aria-label="사람 카메라 영상">
+      <div class="stream-frame"><img id="cam" alt="사람 카메라 영상" draggable="false"></div>
+      <span class="pane-caption"><span class="live-dot" aria-hidden="true"></span>HUMAN</span>
     </section>
-    <section class="pane robot">
-      <img id="robot" alt="">
-      <span class="chip" id="label-robot">AI Sapiens K1 · 물리 시뮬레이션</span>
-      <span class="chip walk" id="walk">걷는 중</span>
+    <section class="pane robot" aria-label="K1 시뮬레이션 영상">
+      <div class="stream-frame"><img id="robot" alt="K1 시뮬레이션 영상" draggable="false"></div>
+      <span class="pane-caption">K1</span>
     </section>
   </main>
 
-  <section id="fallback-view" hidden>
+  <footer class="brand-footer" aria-label="실시간 추종 상태">
+    <span class="footer-rule" aria-hidden="true"></span>
+    <span class="live-word" id="live-word">LIVE MOTION</span>
+  </footer>
+ </div>
+
+  <section id="fallback-view" aria-label="연결 대기 화면" hidden>
     <video id="fb" muted playsinline preload="auto"></video>
-    <span class="chip" id="label-fb">녹화 영상</span>
-    <div class="rest" id="rest" hidden>잠시 후 다시 시작합니다</div>
+    <div class="rest" id="rest" role="status" aria-live="polite" hidden>잠시 후 다시 시작합니다</div>
   </section>
 
-  <footer id="guide">카메라 앞에 서서 팔을 움직여 보세요 · 앞으로 한 걸음 나오면 로봇이 걸어요</footer>
 </div>
 <script src="/static/display.js"></script>
 </body>

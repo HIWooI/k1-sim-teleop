@@ -1,0 +1,56 @@
+# Portable single-PC version of the SHAPE Dual Stage demo.
+backend: split
+perception: mediapipe
+arm_path: improved
+arm_ik: dir
+arm_mode: pd
+arm_vmax: 18
+arm_amax: 300
+walk: false
+loco_profile: presenter
+mirror: true
+loop_video: true
+fallback: 'off'
+fallback_videos: []
+rehearsal_videos: []
+cam_fit: contain
+robot_fit: contain
+auto_calibrate: true
+auto_start: true
+grace_s: 75
+stale_s: 5
+sender_cmd:
+  - '{python}'
+  - -m
+  - k1live.sender
+  - --source
+  - '{source}'
+  - '{loop}'
+  - '{no_mirror}'
+  - '{arm_ik}'
+  - --model
+  - full
+  - --arm-filter-cutoff
+  - '6'
+  - --arm-filter-beta
+  - '2'
+  - --no-smpl
+  - --no-loco
+sim_cmd:
+  - '{python}'
+  - -m
+  - k1live.sim_server
+  - --backend
+  - '{backend}'
+  - --no-autostart
+  - --no-attract
+  - --no-walk
+  - --idle-after
+  - '{idle_after}'
+  - --log-dir
+  - '{session}/sim'
+  - '{arm_mode}'
+  - '{arm_vmax}'
+  - '{arm_amax}'
+  - --render-size
+  - 960x540

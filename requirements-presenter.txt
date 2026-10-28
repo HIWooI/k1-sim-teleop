@@ -1,0 +1,13 @@
+# Single-PC K1 presenter; no Torch, GEM-X, SONIC planner or SMPL assets required.
+# Python 3.12, verified on Linux x86_64 and macOS arm64.
+mujoco==3.15.0
+onnxruntime==1.31.0
+numpy==2.5.4
+scipy==1.18.1
+PyYAML==6.0.3
+opencv-contrib-python==5.0.0.93
+mediapipe==1.1.0
+pyzmq==27.2.0
+imageio==2.38.1
+imageio-ffmpeg==0.6.0
+joblib==1.6.0

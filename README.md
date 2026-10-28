@@ -46,6 +46,11 @@ K1Demo.command (사전 점검 → 서비스 → 브라우저 창 두 개)
 
 ## 빠른 시작
 
+**발표자 팔 모방 + SHAPE Dual Stage 화면을 Linux PC 한 대에서 실행**하려면
+[발표용 설치·실행 안내](docs/presenter.md)를 사용합니다:
+`PYTHON=python3.12 bash scripts/setup_presenter.sh` → `bash run_presenter.sh --source 0`.
+이 구성은 서 있는 상태의 팔 모방이며 전신 자세 모방은 아닙니다.
+
 자세한 설치는 [docs/setup.md](docs/setup.md), 운영은 [docs/runbook.md](docs/runbook.md)에 있습니다.
 
 ```bash

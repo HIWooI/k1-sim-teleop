@@ -1,4 +1,4 @@
-// Audience display. Normal mode: status over SSE (/api/events), MJPEG relays, fallback video when the service
+// Audience display. Normal mode: status over SSE (/api/events), latest JPEG pairs, fallback video when the service
 // says view = "fallback". Preview mode (?preview=1, inside the operator panel): state comes from the parent page by
 // postMessage and the images are polled as single JPEGs, so the preview holds no long-lived connections.
 "use strict";
@@ -18,10 +18,6 @@ async function loadConfig() {
       await new Promise((r) => setTimeout(r, 1000));
     }
   }
-  $("title").textContent = cfg.title;
-  $("label-cam").textContent = cfg.label_cam;
-  $("label-robot").textContent = cfg.label_robot;
-  $("label-fb").textContent = cfg.label_fallback;
   cam.classList.toggle("flip", !!cfg.display_cam_flip);
   cam.classList.toggle("contain", cfg.cam_fit === "contain");
   robot.classList.toggle("contain", cfg.robot_fit === "contain");
@@ -29,38 +25,65 @@ async function loadConfig() {
 }
 
 // ---------------------------------------------------------------- live images
+// Fetch only the newest pair; decode both before committing on the same animation frame.
+// One in-flight pair prevents a slow tab from accumulating an MJPEG playback backlog.
+let polling = false, imageAbort = null, imageUrls = [];
 function startStreams() {
   streamsOn = true;
-  if (preview) return pollImages();
-  const t = Date.now();
-  cam.src = `/cam.mjpg?fps=30&_=${t}`;
-  robot.src = `/robot.mjpg?fps=30&_=${t}`;
+  pollImages();
 }
 function stopStreams() {
   streamsOn = false;
+  if (imageAbort) imageAbort.abort();
   cam.removeAttribute("src");
   robot.removeAttribute("src");
+  imageUrls.forEach((url) => URL.revokeObjectURL(url));
+  imageUrls = [];
 }
-for (const img of [cam, robot]) {
-  img.addEventListener("error", () => {
-    if (!streamsOn || preview) return;
-    setTimeout(() => { if (streamsOn) img.src = `/${img.id}.mjpg?fps=30&_=${Date.now()}`; }, 1000);
-  });
-}
-let polling = false;
 function pollImages() {
   if (polling) return;
   polling = true;
-  const one = (img) => new Promise((res) => {
-    const n = new Image();
-    n.onload = () => { img.src = n.src; res(); };
-    n.onerror = () => res();
-    n.src = `/${img.id}.jpg?_=${Date.now()}`;
-  });
+  const period = preview ? 200 : 1000 / 30;
   const loop = async () => {
     if (!streamsOn) { polling = false; return; }
-    await Promise.all([one(cam), one(robot)]);
-    setTimeout(loop, 200);
+    const started = performance.now(), urls = [];
+    imageAbort = new AbortController();
+    const controller = imageAbort;
+    const timeout = setTimeout(() => controller.abort(), 1500);
+    let committed = false;
+    try {
+      const results = await Promise.allSettled([cam, robot].map(async (img) => {
+        const response = await fetch(`/${img.id}.jpg?_=${Date.now()}`, {
+          cache: "no-store", signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("image unavailable");
+        const url = URL.createObjectURL(await response.blob());
+        urls.push(url);
+        const next = new Image();
+        next.src = url;
+        await next.decode();
+        return next;
+      }));
+      if (results.some((r) => r.status === "rejected")) throw new Error("incomplete image pair");
+      const images = results.map((r) => r.value);
+      if (streamsOn && !controller.signal.aborted) {
+        await new Promise((resolve) => requestAnimationFrame(() => {
+          if (streamsOn && !controller.signal.aborted) {
+            cam.src = images[0].src;
+            robot.src = images[1].src;
+            imageUrls.forEach((url) => URL.revokeObjectURL(url));
+            imageUrls = urls;
+            committed = true;
+          }
+          resolve();
+        }));
+      }
+    } catch (e) { /* Keep the last complete pair during a brief interruption. */ }
+    finally {
+      clearTimeout(timeout);
+      if (!committed) urls.forEach((url) => URL.revokeObjectURL(url));
+    }
+    setTimeout(loop, Math.max(0, period - (performance.now() - started)));
   };
   loop();
 }
@@ -95,7 +118,7 @@ function setView(v) {
     if (preview) {
       fb.removeAttribute("src");
       $("rest").hidden = false;
-      $("rest").textContent = "대체 영상 재생 중 (관객 화면)";
+      $("rest").textContent = "잠시 후 다시 시작합니다";
     } else {
       playFallback();
     }
@@ -111,16 +134,9 @@ function setView(v) {
 function render(s) {
   lastMsgT = Date.now();
   if (!cfg) return;
-  $("title").textContent = s.title || cfg.title;
-  $("subtitle").textContent = s.subtitle || "";
-  $("guide").textContent = s.guide || cfg.guide;
-  const sim = s.sim || {};
-  $("live").classList.toggle("on", s.view === "live" && !!sim.streaming);
-  $("walk").classList.toggle("on", s.view === "live" && !!s.walking);
-  const msg = s.audience_msg || "";
-  if (msg) $("msg").textContent = msg;
-  $("msg").classList.toggle("on", !!msg);
   setView(s.view);
+  if ($("live-word")) $("live-word").textContent = s.cam_ok && s.sim_ok ? "LIVE MOTION" : "STANDBY";
+  cam.style.visibility = s.cam_ok === false ? "hidden" : "visible";
 }
 
 function connect() {

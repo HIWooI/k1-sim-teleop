@@ -136,13 +136,13 @@ CLASSIC_ARMS = {"arm_ik": "shape18", "arm_mode": "student", "arm_vmax": 6.0, "ar
 SET_KEYS = PERSIST + ("source",)
 
 
-def load_config(path=None, cli=None):
+def load_config(path=None, cli=None, *, read_saved=True):
     cfg = copy.deepcopy(DEFAULTS)
     p = Path(path) if path else WEB / "event.yaml"
     if p.exists():
         cfg.update(yaml.safe_load(p.read_text()) or {})
     try:
-        saved = json.loads(SETTINGS_PATH.read_text())
+        saved = json.loads(SETTINGS_PATH.read_text()) if read_saved else {}
         cfg.update({k: v for k, v in saved.items() if k in PERSIST})
     except (OSError, ValueError):
         pass
@@ -1445,6 +1445,7 @@ class Tee:
 def main(argv=None):
     ap = argparse.ArgumentParser(description="K1 live demo service (MuJoCo simulation only)")
     ap.add_argument("--config", default=None, help="event settings YAML (default k1live/web/event.yaml)")
+    ap.add_argument("--no-saved-settings", action="store_true", help="start from the selected profile, ignoring saved panel settings")
     ap.add_argument("--source", default=None, help="camera index or a video file (rehearsal); default: last camera")
     ap.add_argument("--backend", default=None, choices=P.BACKENDS)
     ap.add_argument("--loco-profile", default=None, choices=P.LOCO_PROFILES,
@@ -1469,7 +1470,7 @@ def main(argv=None):
     cfg = load_config(args.config, {"source": src, "backend": args.backend, "fallback": args.fallback,
                                     "loco_profile": args.loco_profile, "crop": args.crop,
                                     "idle_after_s": args.idle_after, "auto_calibrate": True if args.auto else None,
-                                    "auto_start": True if args.auto else None})
+                                    "auto_start": True if args.auto else None}, read_saved=not args.no_saved_settings)
     sess = Path(args.session_dir) if args.session_dir else LOG_ROOT / time.strftime("%Y%m%d-%H%M%S")
     sess.mkdir(parents=True, exist_ok=True)
     log = open(sess / "service.log", "a", buffering=1, encoding="utf-8")
