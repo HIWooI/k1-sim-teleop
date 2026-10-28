@@ -25,7 +25,7 @@ from pathlib import Path
 import urllib.request
 
 target = Path('models/pose_landmarker_full.task')
-expected = '4eaa5eb7a98365221087693fcc286334cf0858e2eb6e15b506aa4a7ecdcec4ad'
+expected = '5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1'
 if not target.exists() or hashlib.sha256(target.read_bytes()).hexdigest() != expected:
     url = ('https://storage.googleapis.com/mediapipe-models/pose_landmarker/'
            'pose_landmarker_full/float16/1/pose_landmarker_full.task')
